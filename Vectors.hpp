@@ -83,6 +83,8 @@ public:
         
         std::cout << std::endl;
     }
+
+    T at(size_t IN) { return VEC[IN]; }
 };
 
 #endif
