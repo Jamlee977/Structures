@@ -5,6 +5,66 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
+template<typename Vector>
+class VectorIterator {
+public:
+    using ValueType = typename Vector::ValueType;
+    using PointerType = ValueType*;
+    using ReferenceType = ValueType&;
+    PointerType vec_ptr;
+public:
+    VectorIterator(PointerType pointer) : vec_ptr(pointer) {}
+
+    VectorIterator& operator++() {
+        vec_ptr++;
+        return *this;
+    }
+
+    VectorIterator operator++(int) {
+        VectorIterator iterator = *this;
+        ++(*this);
+        return iterator;
+    }
+
+
+    VectorIterator& operator--() {
+        vec_ptr--;
+        return *this;
+    }
+
+    VectorIterator operator--(int) {
+        VectorIterator iterator = *this;
+        --(*this);
+        return iterator;
+    }
+
+
+    ReferenceType operator[](int index) {
+        return *(vec_ptr + index);
+    }
+
+
+    PointerType operator->() {
+        return vec_ptr;
+    }
+
+
+    ReferenceType operator*() {
+        return *vec_ptr;
+    }
+
+
+    bool operator==(const VectorIterator& other) const {
+        return vec_ptr == other.vec_ptr;
+    }
+
+    bool operator!=(const VectorIterator& other) const {
+        return !(*this == other);
+    }
+
+
+};
+
 template <typename T>
 class Vector {
 private:
@@ -56,6 +116,9 @@ private:
         }
     }
     
+public:
+    using ValueType = T;
+    using Iterator = VectorIterator<Vector<T>>;
 public:
 
     Vector() {
@@ -151,14 +214,14 @@ public:
      * 
      * @return size_t 
      */
-    size_t size() { return SIZE; }
+    size_t size() const { return SIZE; }
 
     /**
      * @brief A method to return the capacity of the vector
      * 
      * @return size_t 
      */
-    size_t capacity() { return CAPACITY; }
+    size_t capacity() const { return CAPACITY; }
 
     /**
      * @brief A method that prints a vector
@@ -215,19 +278,8 @@ public:
         }
     }
 
-    /**
-     * @brief A method to return the first index (0)
-     * 
-     * @return T 
-     */
-    T begin() { return 0; }
-    
-    /**
-     * @brief A method to return the first index (the size)
-     * 
-     * @return T 
-     */
-    T end() { return SIZE; }
+    Iterator begin() { return Iterator(VEC); }
+    Iterator end() { return Iterator(VEC + SIZE); }
     
     /**
      * @brief A method that returns the first value of the vector
@@ -284,10 +336,37 @@ public:
             || sizeof(T) == sizeof(long)
             || sizeof(T) == sizeof(unsigned int)
             || sizeof(T) == sizeof(short int)
-            )) SIZE++;
+        )) SIZE++;
             
         VEC[indecies] = any;
         for (i = indecies + 1, j = 0; i < SIZE; i++, j++) VEC[i] = temp[j];
+
+        delete[] temp;
+        return 1;
+    }
+
+    /**
+     * @brief A function that removes a specific index from a vector of strings
+     * 
+     * @param indecies 
+     * @return bool
+     */
+    bool str_remove(size_t indecies) {
+        if (SIZE - indecies == -1) {
+            pop();
+            return 1;
+        }
+        if (SIZE - indecies < 0 && SIZE - indecies != -1) return 0;
+
+        size_t i, j;
+
+        T* temp = new T[(SIZE - indecies) - 1];
+        for (i = indecies + 1, j = 0; i < SIZE; i++, j++) temp[j] = VEC[i];
+
+            
+        SIZE = --CAPACITY;
+
+        for (i = indecies, j = 0; i < SIZE; i++, j++) VEC[i] = temp[j];
 
         delete[] temp;
         return 1;
