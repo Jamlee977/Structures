@@ -3,38 +3,38 @@
 #include <iostream>
 #include <initializer_list>
 
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
+#ifndef list_HPP
+#define list_HPP
 
-template<typename Vector>
-class VectorIterator {
+template<typename list>
+class listIterator {
 public:
-    using ValueType = typename Vector::ValueType;
+    using ValueType = typename list::ValueType;
     using PointerType = ValueType*;
     using ReferenceType = ValueType&;
     PointerType vec_ptr;
 public:
-    VectorIterator(PointerType pointer) : vec_ptr(pointer) {}
+    listIterator(PointerType pointer) : vec_ptr(pointer) {}
 
-    VectorIterator& operator++() {
+    listIterator& operator++() {
         vec_ptr++;
         return *this;
     }
 
-    VectorIterator operator++(int) {
-        VectorIterator iterator = *this;
+    listIterator operator++(int) {
+        listIterator iterator = *this;
         ++(*this);
         return iterator;
     }
 
 
-    VectorIterator& operator--() {
+    listIterator& operator--() {
         vec_ptr--;
         return *this;
     }
 
-    VectorIterator operator--(int) {
-        VectorIterator iterator = *this;
+    listIterator operator--(int) {
+        listIterator iterator = *this;
         --(*this);
         return iterator;
     }
@@ -55,11 +55,11 @@ public:
     }
 
 
-    bool operator==(const VectorIterator& other) const {
+    bool operator==(const listIterator& other) const {
         return vec_ptr == other.vec_ptr;
     }
 
-    bool operator!=(const VectorIterator& other) const {
+    bool operator!=(const listIterator& other) const {
         return !(*this == other);
     }
 
@@ -67,7 +67,7 @@ public:
 };
 
 template <typename T>
-class Vector {
+class list {
 private:
     T* VEC = nullptr;
 
@@ -120,22 +120,22 @@ private:
 public:
     using ValueType = T;
     using U         = T;
-    using Iterator  = VectorIterator<Vector<T>>;
+    using Iterator  = listIterator<list<T>>;
 public:
 
-    Vector() { reAllocate(2); }
+    list() { reAllocate(2); }
 
-    Vector(std::initializer_list<T> VEC) {
+    list(std::initializer_list<T> VEC) {
         reAllocate(2);
         for (auto element : VEC) {
             push(element);
         }
     }
 
-    ~Vector() { ::operator delete(VEC, CAPACITY * sizeof(T)); }
+    ~list() { ::operator delete(VEC, CAPACITY * sizeof(T)); }
 
     /**
-     * @brief A push method to enter elements into the vector to the end of it
+     * @brief A push method to enter elements into the list to the end of it
      * 
      * @param VALUE The value
      */
@@ -149,7 +149,7 @@ public:
     }
 
     /**
-     * @brief A push method to enter elements into the vector to the end of it
+     * @brief A push method to enter elements into the list to the end of it
      * 
      * @param VALUE The value
      */
@@ -163,7 +163,7 @@ public:
     }
 
     /**
-     * @brief A pop method to remove the last element of a vector
+     * @brief A pop method to remove the last element of a list
      */
     void pop() {
         if(SIZE > 0) {
@@ -173,7 +173,7 @@ public:
     }
 
     /**
-     * @brief An empty method to make a vector empty
+     * @brief An empty method to make a list empty
      * 
      * @return true 
      * @return false 
@@ -186,7 +186,7 @@ public:
     }
 
     /**
-     * @brief A method that determines if a vector is empty and returns true or false
+     * @brief A method that determines if a list is empty and returns true or false
      * 
      * @return true 
      * @return false 
@@ -215,21 +215,21 @@ public:
     const T& operator[] (size_t INDEX) const { return VEC[INDEX]; } 
 
     /**
-     * @brief A method to return the size of the vector
+     * @brief A method to return the size of the list
      * 
      * @return size_t 
      */
     size_t size() const { return SIZE; }
 
     /**
-     * @brief A method to return the capacity of the vector
+     * @brief A method to return the capacity of the list
      * 
      * @return size_t 
      */
     size_t capacity() const { return CAPACITY; }
 
     /**
-     * @brief A method that prints a vector
+     * @brief A method that prints a list
      */
     void print() {
         for(size_t i = 0; i < size(); i++) std::cout << VEC[i] << '\n';        
@@ -244,7 +244,7 @@ public:
     T at(size_t IN) { return VEC[IN]; }
 
     /**
-     * @brief A method that fills a vector with a given value
+     * @brief A method that fills a list with a given value
      * 
      * @param VALUE The value that you want to fill
      * @param start The start
@@ -258,7 +258,7 @@ public:
     }
 
     /**
-     * @brief A method used to find a given value in a vector
+     * @brief A method used to find a given value in a list
      * 
      * @param any The value
      * @return bool 
@@ -271,7 +271,7 @@ public:
     }
 
     /**
-     * @brief A method that reverses a vector
+     * @brief A method that reverses a list
      */
     void reverse() {
         T temp;
@@ -287,21 +287,21 @@ public:
     Iterator end() { return Iterator(VEC + SIZE); }
     
     /**
-     * @brief A method that returns the first value of the vector
+     * @brief A method that returns the first value of the list
      * 
      * @return T 
      */
     T front() { return VEC[0]; }
 
     /**
-     * @brief A method that returns the last value of the vector
+     * @brief A method that returns the last value of the list
      * 
      * @return T 
      */
     T back() { return VEC[SIZE - 1]; }
 
     /**
-     * @brief A method that assigns a vector with a given value to a given index
+     * @brief A method that assigns a list with a given value to a given index
      * 
      * @param indecies The index
      * @param any The value
@@ -347,7 +347,7 @@ public:
     }
 
     /**
-     * @brief A function that removes a specific index from a vector of strings
+     * @brief A function that removes a specific index from a list of strings
      * 
      * @param indecies 
      * @return bool
@@ -384,7 +384,7 @@ public:
      * @param new_value The new value
      * @param old_value The old value
      */
-    void exchange(T new_value, T old_value) {
+    void replace(T new_value, T old_value) {
         for (size_t i = 0; i < size(); i++)
         {
             if (VEC[i] == old_value) VEC[i] = new_value;
@@ -397,7 +397,7 @@ public:
      * @param new_value The new value
      * @param old_value The old value
      */
-    void quick_exchange(T new_value, T old_value) {
+    void quick_replace(T new_value, T old_value) {
         for (size_t i = 0; i < size(); i++)
         {
             if (VEC[i] == old_value) {
@@ -408,7 +408,7 @@ public:
     }
         
     /**
-     * @brief A method that sorts a vector
+     * @brief A method that sorts a list
      */
     void sort() {
         for (int i = SIZE / 2 - 1; i >= 0; i--) heapify(VEC, SIZE, i);
@@ -420,6 +420,83 @@ public:
         }
     }
 
+    /**
+     * @brief A range class that can be used to assign a list of integers.
+     * 
+     * @param firstNumber The starting of the range.
+     * @param lastNumber The ending of the range.
+     * 
+     */ 
+    void range(int firstNumber, int lastNumber) {
+        int i;
+        for (i = firstNumber; i < lastNumber; i++) {
+            push(i);
+        }
+    }
+
+    /**
+     * @brief A range class that can be used to assign a list.
+     * 
+     * @param firstNumber The starting of the range.
+     * @param lastNumber The ending of the range.
+     * @param step The step for moving (start from 1).
+     * 
+     */
+    void range(int firstNumber, int lastNumber, size_t step) {
+        step = step - 1;
+        int i;
+        for (i = firstNumber; i < lastNumber; i++) {
+            push(i);
+            i = i + step;
+        }
+    }
+
+    /**
+     * @brief A method that will filter a specific condition and change the list into that condition (currently it's only "even" and "odd")
+     * 
+     * @param condition even or odd
+     * @return bool
+     */
+    bool filter(std::string condition) {
+        size_t Size = size();
+        size_t count = 0;
+        T* temp = new T[Size];
+        if(condition == "even") {
+            for(size_t i = 0, j = 0; i < size(); i++) {
+                if((int)VEC[i] % 2 == 0) {
+                    temp[j] = VEC[i];
+                    j++;
+                    count++;
+                }
+            }
+            empty();
+            for(size_t i = 0; i < count; i++) {
+                push(temp[i]);
+            }
+            if(is_empty()) return false;
+            return true;
+
+        }
+
+        if(condition == "odd") {
+            for(size_t i = 0, j = 0; i < size(); i++) {
+                if((int)VEC[i] % 2 != 0) {
+                    temp[j] = VEC[i];
+                    j++;
+                    count++;
+                }
+            }
+            empty();
+            for(size_t i = 0; i < count; i++) {
+                push(temp[i]);
+            }
+            if(is_empty()) return false;
+            return true;
+
+        }
+
+        delete[] temp;
+    }
     
 };
 
