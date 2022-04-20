@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <initializer_list>
 
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
@@ -118,16 +119,20 @@ private:
     
 public:
     using ValueType = T;
-    using Iterator = VectorIterator<Vector<T>>;
+    using U         = T;
+    using Iterator  = VectorIterator<Vector<T>>;
 public:
 
-    Vector() {
+    Vector() { reAllocate(2); }
+
+    Vector(std::initializer_list<T> VEC) {
         reAllocate(2);
+        for (auto element : VEC) {
+            push(element);
+        }
     }
 
-    ~Vector() {
-        ::operator delete(VEC, CAPACITY * sizeof(T));
-    }
+    ~Vector() { ::operator delete(VEC, CAPACITY * sizeof(T)); }
 
     /**
      * @brief A push method to enter elements into the vector to the end of it
@@ -314,35 +319,31 @@ public:
      * @param any The value that you want to be entered
      * @return bool 
      */
-    bool insert(size_t indecies, T any) {
-        if (SIZE - indecies == -1) {
+    bool insert(size_t index, T any) {
+        if(index == size()) {
             push(any);
-            return 1;
+            return true;
         }
-        if (SIZE - indecies < 0 && SIZE - indecies != -1) return 0;
-        SIZE = CAPACITY++;
+        if (index > size()) return false;
+        size_t newSize = size() + 1;
+        T* temp = new T[newSize];
 
-        size_t i, j;
-
-        T* temp = new T[SIZE - indecies];
-        for (i = indecies, j = 0; i < SIZE; i++, j++) temp[j] = VEC[i];
-
-        reAllocate(SIZE + SIZE / 2);
-        if (!(sizeof(T) == sizeof(int) 
-            || sizeof(T) == sizeof(float) 
-            || sizeof(T) == sizeof(double)
-            || sizeof(T) == sizeof(long long)
-            || sizeof(T) == sizeof(long double)
-            || sizeof(T) == sizeof(long)
-            || sizeof(T) == sizeof(unsigned int)
-            || sizeof(T) == sizeof(short int)
-        )) SIZE++;
-            
-        VEC[indecies] = any;
-        for (i = indecies + 1, j = 0; i < SIZE; i++, j++) VEC[i] = temp[j];
+        for(size_t i = 0, j = 0; i < newSize; i++, j++) {
+            if(i == index) {
+                j--;
+                temp[i] = any;
+                continue;
+            }
+            temp[i] = VEC[j];
+        }
+        
+        empty();
+        for(size_t i = 0; i < newSize; i++) {
+            push(temp[i]);
+        }
 
         delete[] temp;
-        return 1;
+        return true;
     }
 
     /**
@@ -351,25 +352,30 @@ public:
      * @param indecies 
      * @return bool
      */
-    bool str_remove(size_t indecies) {
-        if (SIZE - indecies == -1) {
+    bool remove(size_t index) {
+        if(index > size()) return false;
+        if(index == size()) {
             pop();
-            return 1;
+            return true;
         }
-        if (SIZE - indecies < 0 && SIZE - indecies != -1) return 0;
+        size_t newSize = size() - 1;
+        T* temp = new T[newSize];
 
-        size_t i, j;
+        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+            if(j == index) {
+                i--;
+                continue;
+            }
+            temp[i] = VEC[j];
+        }
 
-        T* temp = new T[(SIZE - indecies) - 1];
-        for (i = indecies + 1, j = 0; i < SIZE; i++, j++) temp[j] = VEC[i];
-
-            
-        SIZE = --CAPACITY;
-
-        for (i = indecies, j = 0; i < SIZE; i++, j++) VEC[i] = temp[j];
+        empty();
+        for(size_t i = 0; i < newSize; i++) {
+            push(temp[i]);
+        }
 
         delete[] temp;
-        return 1;
+        return true;
     }
 
     /**
