@@ -320,11 +320,14 @@ public:
      * @return bool 
      */
     bool insert(size_t index, T any) {
+        if(index == 0) return false;
+        index = index - 1;
         if(index == size()) {
             push(any);
             return true;
         }
-        if (index > size()) return false;
+        if(index > size()) return false;
+        if(index < 0) return false;
         size_t newSize = size() + 1;
         T* temp = new T[newSize];
 
@@ -353,11 +356,14 @@ public:
      * @return bool
      */
     bool remove(size_t index) {
+        if(index == 0) return false;
+        index = index - 1;
         if(index > size()) return false;
         if(index == size()) {
             pop();
             return true;
         }
+        if(index < 0) return false;
         size_t newSize = size() - 1;
         T* temp = new T[newSize];
 
