@@ -116,6 +116,16 @@ private:
             heapify(vec, Size, largest);
         }
     }
+
+    size_t len(std::string lenOfString) {
+        int i, countOfStringChars = 0;
+        for (int i = 0; lenOfString[i]; i++)
+        {
+            countOfStringChars++;
+        }
+        return countOfStringChars;
+    }
+
     
 public:
     using ValueType = T;
@@ -232,7 +242,12 @@ public:
      * @brief A method that prints a list
      */
     void print() {
-        for(size_t i = 0; i < size(); i++) std::cout << VEC[i] << '\n';        
+        std::cout << "[ ";
+        for(size_t i = 0; i < size(); i++) {
+            if(i == size() - 1) std::cout << VEC[i];
+            if(i != size() - 1) std::cout << VEC[i] << ", ";
+        }
+        std::cout << " ]" << '\n';
     }
 
     /**
@@ -503,7 +518,6 @@ public:
 
         delete[] temp;
     }
-    
 };
 
 #endif
