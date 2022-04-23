@@ -3,63 +3,63 @@
 #include <iostream>
 #include <initializer_list>
 
-#ifndef list_HPP
-#define list_HPP
+#ifndef ArrayList_HPP
+#define ArrayList_HPP
 
-template<typename list>
-class listIterator {
+template<typename ArrayList>
+class ArrayListIterator {
 public:
-    using ValueType = typename list::ValueType;
+    using ValueType = typename ArrayList::ValueType;
     using PointerType = ValueType*;
     using ReferenceType = ValueType&;
-    PointerType vec_ptr;
+    PointerType arrayList_ptr;
 public:
-    listIterator(PointerType pointer) : vec_ptr(pointer) {}
+    ArrayListIterator(PointerType pointer) : arrayList_ptr(pointer) {}
 
-    listIterator& operator++() {
-        vec_ptr++;
+    ArrayListIterator& operator++() {
+        arrayList_ptr++;
         return *this;
     }
 
-    listIterator operator++(int) {
-        listIterator iterator = *this;
+    ArrayListIterator operator++(int) {
+        ArrayListIterator iterator = *this;
         ++(*this);
         return iterator;
     }
 
 
-    listIterator& operator--() {
-        vec_ptr--;
+    ArrayListIterator& operator--() {
+        arrayList_ptr--;
         return *this;
     }
 
-    listIterator operator--(int) {
-        listIterator iterator = *this;
+    ArrayListIterator operator--(int) {
+        ArrayListIterator iterator = *this;
         --(*this);
         return iterator;
     }
 
 
     ReferenceType operator[](int index) {
-        return *(vec_ptr + index);
+        return *(arrayList_ptr + index);
     }
 
 
     PointerType operator->() {
-        return vec_ptr;
+        return arrayList_ptr;
     }
 
 
     ReferenceType operator*() {
-        return *vec_ptr;
+        return *arrayList_ptr;
     }
 
 
-    bool operator==(const listIterator& other) const {
-        return vec_ptr == other.vec_ptr;
+    bool operator==(const ArrayListIterator& other) const {
+        return arrayList_ptr == other.arrayList_ptr;
     }
 
-    bool operator!=(const listIterator& other) const {
+    bool operator!=(const ArrayListIterator& other) const {
         return !(*this == other);
     }
 
@@ -67,9 +67,9 @@ public:
 };
 
 template <typename T>
-class list {
+class ArrayList {
 private:
-    T* VEC = nullptr;
+    T* arrayList = nullptr;
 
     size_t SIZE = 0;
     size_t CAPACITY = 0;
@@ -84,36 +84,36 @@ private:
 
         if (newCapacity < SIZE) SIZE = newCapacity;
 
-        for (size_t i = 0; i < SIZE; i++) newBlock[i] = std::move(VEC[i]);
+        for (size_t i = 0; i < SIZE; i++) newBlock[i] = std::move(arrayList[i]);
 
-        ::operator delete(VEC, newCapacity * sizeof(T));
-        VEC = newBlock;
+        ::operator delete(arrayList, newCapacity * sizeof(T));
+        arrayList = newBlock;
         CAPACITY = newCapacity;
     }
 
     /**
      * @brief A heapify method
      * 
-     * @param vec 
+     * @param arrayList 
      * @param Size 
      * @param index 
      */
-    void heapify(T vec[], size_t Size, size_t index)
+    void heapify(T arrayList[], size_t Size, size_t index)
     {
         size_t largest = index; 
         size_t member = 2 * index + 1; 
         size_t other_member = 2 * index + 2; 
         
-        if (member < Size && vec[member] > vec[largest])
+        if (member < Size && arrayList[member] > arrayList[largest])
             largest = member;
     
-        if (other_member < Size && vec[other_member] > vec[largest])
+        if (other_member < Size && arrayList[other_member] > arrayList[largest])
             largest = other_member;
     
         if (largest != index) {
-            std::swap(vec[index], vec[largest]);
+            std::swap(arrayList[index], arrayList[largest]);
     
-            heapify(vec, Size, largest);
+            heapify(arrayList, Size, largest);
         }
     }
 
@@ -130,22 +130,22 @@ private:
 public:
     using ValueType = T;
     using U         = T;
-    using Iterator  = listIterator<list<T>>;
+    using Iterator  = ArrayListIterator<ArrayList<T>>;
 public:
 
-    list() { reAllocate(2); }
+    ArrayList() { reAllocate(2); }
 
-    list(std::initializer_list<T> VEC) {
+    ArrayList(std::initializer_list<T> arrayList) {
         reAllocate(2);
-        for (auto element : VEC) {
+        for(auto element : arrayList) {
             push(element);
         }
     }
 
-    ~list() { ::operator delete(VEC, CAPACITY * sizeof(T)); }
+    ~ArrayList() { ::operator delete(arrayList, CAPACITY * sizeof(T)); }
 
     /**
-     * @brief A push method to enter elements into the list to the end of it
+     * @brief A push method to enter elements into the ArrayList to the end of it
      * 
      * @param VALUE The value
      */
@@ -154,12 +154,12 @@ public:
         if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
         
 
-        VEC[SIZE] = VALUE;
+        arrayList[SIZE] = VALUE;
         SIZE++;
     }
 
     /**
-     * @brief A push method to enter elements into the list to the end of it
+     * @brief A push method to enter elements into the ArrayList to the end of it
      * 
      * @param VALUE The value
      */
@@ -168,38 +168,36 @@ public:
         if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
         
 
-        VEC[SIZE] = std::move(VALUE);
+        arrayList[SIZE] = std::move(VALUE);
         SIZE++;
     }
 
     /**
-     * @brief A pop method to remove the last element of a list
+     * @brief A pop method to remove the last element of an ArrayList
      */
     void pop() {
         if(SIZE > 0) {
             SIZE--;
-            VEC[SIZE].~T();
+            arrayList[SIZE].~T();
         }
     }
 
     /**
-     * @brief An empty method to make a list empty
+     * @brief An empty method to make an ArrayList empty
      * 
-     * @return true 
-     * @return false 
+     * @return bool
      */
     bool empty() {
-        for (size_t i = 0; i < SIZE; i++) VEC[i].~T();
+        for (size_t i = 0; i < SIZE; i++) arrayList[i].~T();
 
         SIZE = 0;
         return true;
     }
 
     /**
-     * @brief A method that determines if a list is empty and returns true or false
+     * @brief A method that determines if an ArrayList is empty and returns true or false
      * 
-     * @return true 
-     * @return false 
+     * @return bool
      */
     bool is_empty() {
         if(SIZE != 0) return 0;
@@ -217,12 +215,12 @@ public:
     T& emplace(Arguments&&... ARGS) {
         if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
 
-        new(&VEC[SIZE]) T(std::forward<Arguments>(ARGS)...);
-        return VEC[SIZE++];
+        new(&arrayList[SIZE]) T(std::forward<Arguments>(ARGS)...);
+        return arrayList[SIZE++];
     }
 
-    T& operator[] (size_t INDEX) { return VEC[INDEX]; } 
-    const T& operator[] (size_t INDEX) const { return VEC[INDEX]; } 
+    T& operator[] (size_t INDEX) { return arrayList[INDEX]; } 
+    const T& operator[] (size_t INDEX) const { return arrayList[INDEX]; } 
 
     /**
      * @brief A method to return the size of the list
@@ -242,12 +240,15 @@ public:
      * @brief A method that prints a list
      */
     void print() {
-        std::cout << "[ ";
-        for(size_t i = 0; i < size(); i++) {
-            if(i == size() - 1) std::cout << VEC[i];
-            if(i != size() - 1) std::cout << VEC[i] << ", ";
+        if(!(is_empty())) {
+            std::cout << "[ ";
+            for(size_t i = 0; i < size(); i++) {
+                if(i == size() - 1) std::cout << arrayList[i];
+                if(i != size() - 1) std::cout << arrayList[i] << ", ";
+            }
+            std::cout << " ]" << '\n';
         }
-        std::cout << " ]" << '\n';
+        else std::cout << "[]";
     }
 
     /**
@@ -256,10 +257,10 @@ public:
      * @param IN The index
      * @return T 
      */
-    T at(size_t IN) { return VEC[IN]; }
+    T at(size_t IN) { return arrayList[IN]; }
 
     /**
-     * @brief A method that fills a list with a given value
+     * @brief A method that fills an ArrayList with a given value
      * 
      * @param VALUE The value that you want to fill
      * @param start The start
@@ -268,19 +269,19 @@ public:
      */
     bool fill(T VALUE, size_t start, size_t end) {
         if (start > end) return 0;
-        for (size_t i = start; i < end; i++) VEC[i] = VALUE;
+        for (size_t i = start; i < end; i++) arrayList[i] = VALUE;
         return 1;
     }
 
     /**
-     * @brief A method used to find a given value in a list
+     * @brief A method used to find a given value in an ArrayList
      * 
      * @param any The value
      * @return bool 
      */
     bool find(T any) {
         for(size_t i = 0; i < SIZE; i++) {
-            if (VEC[i] == any) return true;
+            if (arrayList[i] == any) return true;
         }
         return false;
     }
@@ -292,31 +293,42 @@ public:
         T temp;
 
         for(size_t i = 0; i < SIZE / 2; i++){
-            temp = VEC[i];
-            VEC[i] = VEC[SIZE-i-1];
-            VEC[SIZE-i-1] = temp;
+            temp = arrayList[i];
+            arrayList[i] = arrayList[SIZE-i-1];
+            arrayList[SIZE-i-1] = temp;
         }
     }
 
-    Iterator begin() { return Iterator(VEC); }
-    Iterator end() { return Iterator(VEC + SIZE); }
+    /**
+     * @brief The beginning of the iterator
+     * 
+     * @return Iterator 
+     */
+    Iterator begin() { return Iterator(arrayList); }
+
+    /**
+     * @brief The ending of the iterator
+     * 
+     * @return Iterator 
+     */
+    Iterator end() { return Iterator(arrayList + SIZE); }
     
     /**
-     * @brief A method that returns the first value of the list
+     * @brief A method that returns the first value of the ArrayList
      * 
      * @return T 
      */
-    T front() { return VEC[0]; }
+    T front() { return arrayList[0]; }
 
     /**
-     * @brief A method that returns the last value of the list
+     * @brief A method that returns the last value of the ArrayList
      * 
      * @return T 
      */
-    T back() { return VEC[SIZE - 1]; }
+    T back() { return arrayList[SIZE - 1]; }
 
     /**
-     * @brief A method that assigns a list with a given value to a given index
+     * @brief A method that assigns an ArrayList with a given value to a given index
      * 
      * @param indecies The index
      * @param any The value
@@ -352,7 +364,7 @@ public:
                 temp[i] = any;
                 continue;
             }
-            temp[i] = VEC[j];
+            temp[i] = arrayList[j];
         }
         
         empty();
@@ -365,7 +377,7 @@ public:
     }
 
     /**
-     * @brief A function that removes a specific index from a list of strings
+     * @brief A function that removes a specific index from an ArrayList of strings
      * 
      * @param indecies 
      * @return bool
@@ -387,7 +399,7 @@ public:
                 i--;
                 continue;
             }
-            temp[i] = VEC[j];
+            temp[i] = arrayList[j];
         }
 
         empty();
@@ -408,7 +420,7 @@ public:
     void replace(T new_value, T old_value) {
         for (size_t i = 0; i < size(); i++)
         {
-            if (VEC[i] == old_value) VEC[i] = new_value;
+            if (arrayList[i] == old_value) arrayList[i] = new_value;
         }
     }
 
@@ -421,28 +433,28 @@ public:
     void quick_replace(T new_value, T old_value) {
         for (size_t i = 0; i < size(); i++)
         {
-            if (VEC[i] == old_value) {
-                VEC[i] = new_value;
+            if (arrayList[i] == old_value) {
+                arrayList[i] = new_value;
                 break;
             }
         }
     }
         
     /**
-     * @brief A method that sorts a list
+     * @brief A method that sorts an ArrayList
      */
     void sort() {
-        for (int i = SIZE / 2 - 1; i >= 0; i--) heapify(VEC, SIZE, i);
+        for (int i = SIZE / 2 - 1; i >= 0; i--) heapify(arrayList, SIZE, i);
 
         for (int i = SIZE - 1; i > 0; i--) {
-            std::swap(VEC[0], VEC[i]);
+            std::swap(arrayList[0], arrayList[i]);
 
-            heapify(VEC, i, 0);
+            heapify(arrayList, i, 0);
         }
     }
 
     /**
-     * @brief A range class that can be used to assign a list of integers.
+     * @brief A range class that can be used to assign an ArrayList of integers.
      * 
      * @param firstNumber The starting of the range.
      * @param lastNumber The ending of the range.
@@ -456,7 +468,8 @@ public:
     }
 
     /**
-     * @brief A range class that can be used to assign a list.
+     * @brief A range class that can be used to assign an ArrayList.
+     * range(0, 21, 2) will assign the even numbers between 0 and 21 including 0
      * 
      * @param firstNumber The starting of the range.
      * @param lastNumber The ending of the range.
@@ -473,7 +486,7 @@ public:
     }
 
     /**
-     * @brief A method that will filter a specific condition and change the list into that condition (currently it's only "even" and "odd")
+     * @brief A method that will filter a specific condition and change the ArrayList into that condition (currently it's only "even" and "odd")
      * 
      * @param condition even or odd
      * @return bool
@@ -484,8 +497,8 @@ public:
         T* temp = new T[Size];
         if(condition == "even") {
             for(size_t i = 0, j = 0; i < size(); i++) {
-                if((int)VEC[i] % 2 == 0) {
-                    temp[j] = VEC[i];
+                if((int)arrayList[i] % 2 == 0) {
+                    temp[j] = arrayList[i];
                     j++;
                     count++;
                 }
@@ -501,8 +514,8 @@ public:
 
         if(condition == "odd") {
             for(size_t i = 0, j = 0; i < size(); i++) {
-                if((int)VEC[i] % 2 != 0) {
-                    temp[j] = VEC[i];
+                if((int)arrayList[i] % 2 != 0) {
+                    temp[j] = arrayList[i];
                     j++;
                     count++;
                 }
@@ -516,6 +529,39 @@ public:
 
         }
 
+        delete[] temp;
+    }
+
+    /**
+     * @brief A method used to swap 2 elements in an ArrayList with indecies starting from 1 for the first index
+     * 
+     * @param firstIndex 
+     * @param secondIndex 
+     */
+    void swap(int firstIndex, int secondIndex) {
+        firstIndex = firstIndex - 1;
+        secondIndex = secondIndex - 1;
+        T temp = arrayList[firstIndex];
+        arrayList[firstIndex] = arrayList[secondIndex];
+        arrayList[secondIndex] = temp;
+    }
+
+    void swap(ArrayList<T> other) {
+        size_t smallestSize;
+        if(size() > other.size()) smallestSize = other.size();
+        else smallestSize = size();
+        T* temp = new T[smallestSize];
+        for(size_t i = 0; i < smallestSize; i++) {
+            temp[i] = arrayList[i];
+        }
+        empty();
+        for(size_t i = 0; i < smallestSize; i++) {
+            arrayList[i] = other.arrayList[i];
+        }
+        other.empty();
+        for(size_t i = 0; i < smallestSize; i++) {
+            other.arrayList[i] = temp[i];
+        }
         delete[] temp;
     }
 };
