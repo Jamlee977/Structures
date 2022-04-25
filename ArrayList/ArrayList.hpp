@@ -460,11 +460,13 @@ public:
      * @param lastNumber The ending of the range.
      * 
      */ 
-    void range(int firstNumber, int lastNumber) {
+    bool range(int firstNumber, int lastNumber) {
         int i;
+        if(firstNumber > lastNumber) return false;
         for (i = firstNumber; i < lastNumber; i++) {
             push(i);
         }
+        return true;
     }
 
     /**
@@ -476,13 +478,15 @@ public:
      * @param step The step for moving (start from 1).
      * 
      */
-    void range(int firstNumber, int lastNumber, size_t step) {
+    bool range(int firstNumber, int lastNumber, size_t step) {
         step = step - 1;
         int i;
+        if(firstNumber > lastNumber) return false;
         for (i = firstNumber; i < lastNumber; i++) {
             push(i);
             i = i + step;
         }
+        return true;
     }
 
     /**
@@ -544,6 +548,37 @@ public:
         T temp = arrayList[firstIndex];
         arrayList[firstIndex] = arrayList[secondIndex];
         arrayList[secondIndex] = temp;
+    }
+
+    /**
+     * @brief A methods that can be used to insert an ArrayList into an array that has a different size compared to the arraylist
+     * 
+     * @param Array 
+     * @param size 
+     */
+    void toArray(T Array[], size_t Size) {
+        for(size_t i = 0; i < Size; i++) { Array[i] = this->arrayList[i]; }
+    }
+
+    /**
+     * @brief A methods that can be used to insert an ArrayList into an array which has the same size as the arraylist
+     * 
+     * @param Array 
+     */
+    void toArray(T Array[]) {
+        for(size_t i = 0; i < size(); i++) { Array[i] = this->arrayList[i]; }
+    }
+
+    /**
+     * @brief A method that can be used to check if 2 ArrayLists are equal for all elements
+     * 
+     * @param other 
+     * @return bool
+     */
+    bool is_equal(ArrayList<T> other) {
+        if(this->size() != other.size()) return 0;
+        for(size_t i = 0; i < this->size(); i++) if(this->arrayList[i] != other.arrayList[i]) return 0; 
+        return 1;
     }
 
 };
