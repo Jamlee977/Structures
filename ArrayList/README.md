@@ -85,3 +85,14 @@ If printed it would be: { 2, 4, 6 }
 
 ### swap()
 Used to swap 2 elements in an arraylist
+
+### toArray()
+Overleoaded with 2 parameters or 1 parameter.
+For 2 parameters:
+Array and Size
+As for you enter the size of that array 
+Or by using one parameter (Array)
+As by doing so the size should be the same as the ArrayList's size
+  
+### is_equal()
+To check if 2 link lists have the same elements with the same sort
