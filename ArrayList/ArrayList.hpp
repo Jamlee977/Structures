@@ -454,6 +454,20 @@ public:
     }
 
     /**
+     * @brief A method that checks if an ArrayList is sorted
+     * 
+     * @return bool
+     */
+    bool is_sorted() {
+        if(this->size() == 0) return false;
+        if(this->size() == 1) return true;
+
+        for(size_t i = 1; i < this->size(); i++) if(this->arrayList[i - 1] > this->arrayList[i]) return false;
+
+        return true;
+    }
+
+    /**
      * @brief A range class that can be used to assign an ArrayList of integers.
      * 
      * @param firstNumber The starting of the range.
