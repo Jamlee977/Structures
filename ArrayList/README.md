@@ -68,6 +68,9 @@ The output would be: [ "Sarah", "Theodora", "Moana", "Bella", "Emma" ]
 
 ### sort()
 To sort an arraylist (according to alphabet for strings)
+  
+### is_sorted()
+To check if an arraylist is sorted
 
 ### range()
 To insert a range to an arraylist
