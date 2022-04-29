@@ -377,7 +377,7 @@ public:
     }
 
     /**
-     * @brief A function that removes a specific index from an ArrayList of strings
+     * @brief A function that removes a specific index from an ArrayList
      * 
      * @param indecies 
      * @return bool
@@ -404,6 +404,69 @@ public:
 
         empty();
         for(size_t i = 0; i < newSize; i++) {
+            push(temp[i]);
+        }
+
+        delete[] temp;
+        return true;
+    }
+
+    /**
+     * @brief A function that removes all specific value from an ArrayList
+     * 
+     * @param any 
+     * @return bool
+     */
+    bool remove_all(T any) {
+        size_t newSize = size() - 1;
+        T* temp = new T[newSize];
+
+        size_t SIZE = 0;
+        size_t subOfSize = 0;
+        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+            if(this->arrayList[j] == any) {
+                i--;
+                subOfSize++;
+                continue;
+            }
+            temp[i] = arrayList[j];
+            SIZE++;
+        }
+
+        this->empty();
+        for(size_t i = 0; i <= SIZE - subOfSize; i++) {
+            push(temp[i]);
+        }
+
+        delete[] temp;
+        return true;
+    }
+
+    /**
+     * @brief A function that removes a specific value from an ArrayList
+     * 
+     * @param any 
+     * @return bool
+     */
+    bool remove_e(T any) {
+        size_t newSize = size() - 1;
+        T* temp = new T[newSize];
+
+        size_t SIZE = 0;
+        size_t count = 0;
+        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+            if(count == 0 && this->arrayList[j] == any) {
+                i--;
+                count++;
+                continue;
+            }
+            
+            temp[i] = arrayList[j];
+            SIZE++;
+        }
+
+        this->empty();
+        for(size_t i = 0; i <= SIZE - 1; i++) {
             push(temp[i]);
         }
 
@@ -464,6 +527,20 @@ public:
 
         for(size_t i = 1; i < this->size(); i++) if(this->arrayList[i - 1] > this->arrayList[i]) return false;
 
+        return true;
+    }
+
+    /**
+     * @brief A range class that can be used to assign an ArrayList of integers.
+     * 
+     * @param number The starting of the range. 
+     */ 
+    bool range(size_t number) {
+        size_t i;
+        if(0 > number) return false;
+        for (i = 0; i < number; i++) {
+            push(i);
+        }
         return true;
     }
 
