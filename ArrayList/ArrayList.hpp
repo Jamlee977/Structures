@@ -1,7 +1,10 @@
 #pragma once
 
+// ! Omar Estietie
 #include <iostream>
 #include <initializer_list>
+#include <ctime>
+// #include <cstdlib>
 
 #ifndef ArrayList_HPP
 #define ArrayList_HPP
@@ -137,7 +140,7 @@ public:
 
     ArrayList(std::initializer_list<T> arrayList) {
         reAllocate(2);
-        for(auto element : arrayList) {
+        for(auto&& element : arrayList) {
             push(element);
         }
     }
@@ -235,21 +238,6 @@ public:
      * @return size_t 
      */
     size_t capacity() const { return CAPACITY; }
-
-    /**
-     * @brief A method that prints a list
-     */
-    void print() {
-        if(!(is_empty())) {
-            std::cout << "[ ";
-            for(size_t i = 0; i < size(); i++) {
-                if(i == size() - 1) std::cout << arrayList[i];
-                if(i != size() - 1) std::cout << arrayList[i] << ", ";
-            }
-            std::cout << " ]" << '\n';
-        }
-        else std::cout << "[]";
-    }
 
     /**
      * @brief A method that returns the value of the given index
@@ -670,6 +658,30 @@ public:
         if(this->size() != other.size()) return 0;
         for(size_t i = 0; i < this->size(); i++) if(this->arrayList[i] != other.arrayList[i]) return 0; 
         return 1;
+    }
+
+    void shuffle() {
+
+        srand(time(NULL));
+
+        for(size_t i = this->size() - 1; i > 0; i--) {
+            size_t j = rand() % (i + 1);
+            std::swap(this->arrayList[i], this->arrayList[j]);
+        }
+        return;
+    }
+
+
+   friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
+        out << "[";
+        for(size_t i = 0; i < Object.size(); i++) {
+            if(i == 0) out << ' ' << Object.arrayList[0] << ", ";
+            else if(i != Object.size() - 1) out << Object.arrayList[i] << ", ";
+            if(i == Object.size() - 1) out << Object.arrayList[i] << ' ';
+        }
+        out << "]" << "\n";
+        
+       return out;
     }
 
 };
