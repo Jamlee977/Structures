@@ -22,7 +22,7 @@ Returns the size of an arraylist
 ### capacity()
 Returns the capacity of an arraylist
 
-### print()
+### cout <<
 To print an arraylist.
 e.g. ArrayList<int> numbers = { 1, 2, 3, 4 }; numbers.print();
 The output would [ 1, 2, 3, 4 ]
