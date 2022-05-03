@@ -72,6 +72,11 @@ private:
     size_t Size = 0;
     size_t Capacity = 0;
 
+    /**
+     * @brief A method to reallocate the memory
+     * 
+     * @param newCapacity 
+     */
     void reAllocate(size_t newCapacity) {
         T* newBlock = new T[newCapacity];
 
@@ -84,6 +89,11 @@ private:
         Capacity = newCapacity;
     }
 
+    /**
+     * @brief A method that adds a value to the end of a tuple
+     * 
+     * @param VALUE 
+     */
     void push(const T& VALUE) {
 
         if (Size >= Capacity) reAllocate(Capacity + Capacity / 2);
@@ -93,6 +103,11 @@ private:
         Size++;
     }
 
+    /**
+     * @brief A method that adds a value to the end of a tuple
+     * 
+     * @param VALUE 
+     */
     void push(T&& VALUE) {
 
         if (Size >= Capacity) reAllocate(Capacity + Capacity / 2);
@@ -102,6 +117,10 @@ private:
         Size++;
     }
 
+    /**
+     * @brief A method that removes the last element of a tuple
+     * 
+     */
     void pop() {
         if(this->Size > 0) {
             this->Size--;
@@ -109,6 +128,12 @@ private:
         }
     }
 
+    /**
+     * @brief A method that makes a tuple emoty
+     * 
+     * @return true 
+     * @return false 
+     */
     bool empty() {
         for (size_t i = 0; i < Size; i++) tuple[i].~T();
 
@@ -131,41 +156,106 @@ public:
         }
     }
 
+    /**
+     * @brief A method to get the size of the tuple
+     * 
+     * @return size_t 
+     */
     size_t size() const { return Size; }
 
+    /**
+     * @brief The beginning of the iterator
+     * 
+     * @return Iterator 
+     */
     Iterator begin() { return Iterator(tuple); }
 
+    /**
+     * @brief The ending of the iterator
+     * 
+     * @return Iterator 
+     */
     Iterator end() { return Iterator(tuple + Size); }
 
+    /**
+     * @brief A method to get the value of a specific index (start from 1)
+     * 
+     * @param index 
+     * @return T 
+     */
     T get(size_t index) { 
         index = index - 1;
         return this->tuple[index]; 
     }
 
+    /**
+     * @brief A class that allows tuples to use lists methods
+     * 
+     */
     struct list {
+        /**
+         * @brief A method to get the value of a specific index (start from 1)
+         * 
+         * @param index 
+         * @param TUPLE 
+         * @return T 
+         */
         T get(size_t index, Tuple<T>& TUPLE) { 
             index = index - 1;
             return TUPLE.tuple[index]; 
         }
 
+        /**
+         * @brief A push method to enter elements into the tuple to the end of it
+         * 
+         * @param value 
+         * @param TUPLE 
+         */
         void push(const T& value, Tuple<T>& TUPLE) {
             TUPLE.push(value);
         }
 
+        /**
+         * @brief A push method to enter elements into the tuple to the end of it
+         * 
+         * @param value 
+         * @param TUPLE 
+         */
         void push(T&& value, Tuple<T>& TUPLE) {
             TUPLE.push(value);
         }
 
+        /**
+         * @brief A method that removes the last element of a tuple
+         * 
+         * @param TUPLE 
+         */
         void pop(Tuple<T>& TUPLE) {
             TUPLE.pop();
         }
 
+        /**
+         * @brief A method to change a value of an index
+         * 
+         * @param index 
+         * @param newValue 
+         * @param TUPLE 
+         * @return bool 
+         */
         bool change(size_t index, T newValue, Tuple<T>& TUPLE) {
             index = index - 1;
             TUPLE.tuple[index] = newValue;
             return true;
         }
 
+        /**
+         * @brief A method that inserts a value to an index and moves the other indecies by 1
+         * 
+         * @param index 
+         * @param any 
+         * @param TUPLE 
+         * @return bool 
+         */
         bool insert(size_t index, T any, Tuple<T>& TUPLE) {
             if(index == 0) return false;
             index = index - 1;
@@ -195,6 +285,14 @@ public:
             return true;
         }
 
+        /**
+         * @brief A function that removes a specific index from a tuple
+         * 
+         * @param index 
+         * @param TUPLE 
+         * @return true 
+         * @return false 
+         */
         bool remove(size_t index, Tuple<T>& TUPLE) {
             if(index == 0) return false;
             index = index - 1;
@@ -224,6 +322,13 @@ public:
             return true;
         }
 
+        /**
+         * @brief A function that removes all specific value from a tuple
+         * 
+         * @param any 
+         * @param TUPLE 
+         * @return bool
+         */
         bool remove_all(T any, Tuple<T>& TUPLE) {
             size_t newSize = TUPLE.size() - 1;
             T* temp = new T[newSize];
@@ -249,6 +354,13 @@ public:
             return true;
         }
 
+        /**
+         * @brief A function that removes a specific value from a tuple
+         * 
+         * @param any 
+         * @param TUPLE 
+         * @return bool
+         */
         bool remove_e(T any, Tuple<T>& TUPLE) {
             size_t newSize = TUPLE.size() - 1;
             T* temp = new T[newSize];
@@ -275,6 +387,12 @@ public:
             return true;
         }
 
+        /**
+         * @brief A method to make a tuple empty
+         * 
+         * @param TUPLE 
+         * @return bool
+         */
         bool empty(Tuple<T>& TUPLE) {
             for (size_t i = 0; i < TUPLE.size(); i++) TUPLE.tuple[i].~T();
 
@@ -282,6 +400,11 @@ public:
             return true;
         }
 
+        /**
+         * @brief A method that reverses a tuple
+         * 
+         * @param TUPLE 
+         */
         void reverse(Tuple<T>& TUPLE) {
             T temp;
 
@@ -292,6 +415,13 @@ public:
             }
         }
 
+        /**
+         * @brief A method that exchanges all the values assigned in "old_value" with the "new_value"
+         * 
+         * @param new_value The new value
+         * @param old_value The old value
+         * @param TUPLE 
+         */
         void replace(T new_value, T old_value, Tuple<T>& TUPLE) {
             for (size_t i = 0; i < TUPLE.size(); i++)
             {
@@ -299,6 +429,13 @@ public:
             }
         }
 
+        /**
+         * @brief A method that exchanges the first value in "old_value" with the "new_value"
+         * 
+         * @param new_value The new value
+         * @param old_value The old value 
+         * @param TUPLE 
+         */
         void quick_replace(T new_value, T old_value, Tuple<T>& TUPLE) {
             for (size_t i = 0; i < TUPLE.size(); i++)
             {
@@ -309,6 +446,11 @@ public:
             }
         }
 
+        /**
+         * @brief A method that sorts a tuple
+         * 
+         * @param TUPLE 
+         */
         void sort(Tuple<T>& TUPLE) {
             for (int i = TUPLE.Size / 2 - 1; i >= 0; i--) heapify(TUPLE.tuple, TUPLE.Size, i);
 
@@ -319,6 +461,13 @@ public:
             }
         }
 
+        /**
+         *@brief A range class that can be used to assign an ArrayList of numbers. 
+         * @param number 
+         * @param TUPLE 
+         * @return true 
+         * @return false 
+         */
         bool range(size_t number, Tuple<T>& TUPLE) {
             size_t i;
             if(0 > number) return false;
@@ -328,6 +477,15 @@ public:
             return true;
         }
 
+        /**
+         * @brief A range class that can be used to assign an tuple of numbers.
+         * 
+         * @param firstNumber The starting of the range.
+         * @param lastNumber The ending of the range.
+         * @param TUPLE 
+         * @return true 
+         * @return false 
+         */
         bool range(int firstNumber, int lastNumber, Tuple<T>& TUPLE) {
             int i;
             if(firstNumber > lastNumber) return false;
@@ -337,6 +495,16 @@ public:
             return true;
         }
 
+        /**
+         * @brief A range class that can be used to assign an ArrayList.
+         * range(0, 21, 2) will assign the even numbers between 0 and 21 including 0
+         * 
+         * @param firstNumber The starting of the range.
+         * @param lastNumber The ending of the range.
+         * @param step The step for moving (start from 1).
+         * @param TUPLE 
+         * @return bool 
+         */
         bool range(int firstNumber, int lastNumber, size_t step, Tuple<T>& TUPLE) {
             step = step - 1;
             int i;
@@ -348,6 +516,11 @@ public:
             return true;
         }
 
+        /**
+         * @brief A method that shuffles a tuple
+         * 
+         * @param TUPLE 
+         */
         void shuffle(Tuple<T>& TUPLE) {
 
             srand(time(NULL));
@@ -359,12 +532,26 @@ public:
             return;
         }
 
+        /**
+         * @brief A method that fills a tuple with a given value
+         * 
+         * @param VALUE 
+         * @param start 
+         * @param end 
+         * @param TUPLE 
+         * @return bool
+         */
         bool fill(T VALUE, size_t start, size_t end, Tuple<T>& TUPLE) {
             if (start > end) return 0;
             for (size_t i = start; i < end; i++) TUPLE.tuple[i] = VALUE;
             return 1;
         }
 
+        /**
+         * @brief A method that prints a tuple
+         * 
+         * @param TUPLE 
+         */
         void print(Tuple<T>& TUPLE) {
             if(!(TUPLE.is_empty())) {
                 std::cout << "[ ";
@@ -377,6 +564,11 @@ public:
             else std::cout << "[]";
         }
 
+        /**
+         * @brief A method to check is a tuple is sorted
+         * 
+         * @return bool
+         */
         bool is_sorted(const Tuple<T>& TUPLE) {
             if(TUPLE.size() == 0) return false;
             if(TUPLE.size() == 1) return true;
@@ -388,12 +580,25 @@ public:
 
         size_t size(Tuple<T> TUPLE) const { return TUPLE.Size; }
 
+        /**
+         * @brief A method to check if a tuple is empty
+         * 
+         * @param TUPLE 
+         * @return bool 
+         */
         bool is_empty(const Tuple<T>& TUPLE) {
             if(TUPLE.Size != 0) return 0;
             return 1;
         }
 
     private:
+        /**
+         * @brief A heapify method
+         * 
+         * @param TUPLE 
+         * @param Size 
+         * @param index 
+         */
         void heapify(T TUPLE[], size_t Size, size_t index) {
             size_t largest = index; 
             size_t member = 2 * index + 1; 
@@ -411,15 +616,36 @@ public:
         }
     } List;
 
+    /**
+     * @brief A method to check if a tuple is empty
+     * 
+     * @return bool
+     */
     bool is_empty() {
         if(Size != 0) return 0;
         return 1;
     }
     
+    /**
+     * @brief A method to return the first value of a tuple
+     * 
+     * @return T 
+     */
     T front() { return tuple[0]; }
 
+    /**
+     * @brief A method to return the last value of a tuple
+     * 
+     * @return T 
+     */
     T back() { return tuple[Size - 1]; }
 
+    /**
+     * @brief A method that checks if a value exists in a tuple
+     * 
+     * @param any 
+     * @return bool
+     */
     bool find(T any) {
         for(size_t i = 0; i < Size; i++) {
             if (tuple[i] == any) return true;
@@ -427,6 +653,11 @@ public:
         return false;
     }
 
+    /**
+     * @brief A method to check is a tuple is sorted
+     * 
+     * @return bool
+     */
     bool is_sorted() {
         if(this->size() == 0) return false;
         if(this->size() == 1) return true;
