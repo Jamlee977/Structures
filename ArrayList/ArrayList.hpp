@@ -4,7 +4,6 @@
 #include <iostream>
 #include <initializer_list>
 #include <ctime>
-// #include <cstdlib>
 
 #ifndef ArrayList_HPP
 #define ArrayList_HPP
@@ -20,7 +19,7 @@ public:
     ArrayListIterator(PointerType pointer) : arrayList_ptr(pointer) {}
 
     ArrayListIterator& operator++() {
-        arrayList_ptr++;
+        this->arrayList_ptr++;
         return *this;
     }
 
@@ -32,7 +31,7 @@ public:
 
 
     ArrayListIterator& operator--() {
-        arrayList_ptr--;
+        this->arrayList_ptr--;
         return *this;
     }
 
@@ -44,29 +43,27 @@ public:
 
 
     ReferenceType operator[](int index) {
-        return *(arrayList_ptr + index);
+        return *(this->arrayList_ptr + index);
     }
 
 
     PointerType operator->() {
-        return arrayList_ptr;
+        return this->arrayList_ptr;
     }
 
 
     ReferenceType operator*() {
-        return *arrayList_ptr;
+        return *this->arrayList_ptr;
     }
 
 
     bool operator==(const ArrayListIterator& other) const {
-        return arrayList_ptr == other.arrayList_ptr;
+        return this->arrayList_ptr == other.arrayList_ptr;
     }
 
     bool operator!=(const ArrayListIterator& other) const {
         return !(*this == other);
     }
-
-
 };
 
 template <typename T>
@@ -85,13 +82,13 @@ private:
     void reAllocate(size_t newCapacity) {
         T* newBlock = new T[newCapacity];
 
-        if (newCapacity < SIZE) SIZE = newCapacity;
+        if (newCapacity < this->SIZE) this->SIZE = newCapacity;
 
-        for (size_t i = 0; i < SIZE; i++) newBlock[i] = std::move(arrayList[i]);
+        for (size_t i = 0; i < SIZE; i++) newBlock[i] = std::move(this->arrayList[i]);
 
-        ::operator delete(arrayList, newCapacity * sizeof(T));
-        arrayList = newBlock;
-        CAPACITY = newCapacity;
+        ::operator delete(this->arrayList, newCapacity * sizeof(T));
+        this->arrayList = newBlock;
+        this->CAPACITY = newCapacity;
     }
 
     /**
@@ -101,8 +98,7 @@ private:
      * @param Size 
      * @param index 
      */
-    void heapify(T arrayList[], size_t Size, size_t index)
-    {
+    void heapify(T arrayList[], size_t Size, size_t index) {
         size_t largest = index; 
         size_t member = 2 * index + 1; 
         size_t other_member = 2 * index + 2; 
@@ -122,10 +118,7 @@ private:
 
     size_t len(std::string lenOfString) {
         int i, countOfStringChars = 0;
-        for (int i = 0; lenOfString[i]; i++)
-        {
-            countOfStringChars++;
-        }
+        for (int i = 0; lenOfString[i]; i++) countOfStringChars++;    
         return countOfStringChars;
     }
 
@@ -136,16 +129,16 @@ public:
     using Iterator  = ArrayListIterator<ArrayList<T>>;
 public:
 
-    ArrayList() { reAllocate(2); }
+    ArrayList() { this->reAllocate(2); }
 
     ArrayList(std::initializer_list<T> arrayList) {
-        reAllocate(2);
+        this->reAllocate(2);
         for(auto&& element : arrayList) {
-            push(element);
+            this->push(element);
         }
     }
 
-    ~ArrayList() { ::operator delete(arrayList, CAPACITY * sizeof(T)); }
+    ~ArrayList() { ::operator delete(this->arrayList, this->CAPACITY * sizeof(T)); }
 
     /**
      * @brief A push method to enter elements into the ArrayList to the end of it
@@ -154,11 +147,11 @@ public:
      */
     void push(const T& VALUE) {
 
-        if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
+        if (this->SIZE >= this->CAPACITY) this->reAllocate(this->CAPACITY + this->CAPACITY / 2);
         
 
-        arrayList[SIZE] = VALUE;
-        SIZE++;
+        this->arrayList[this->SIZE] = VALUE;
+        this->SIZE++;
     }
 
     /**
@@ -168,20 +161,20 @@ public:
      */
     void push(T&& VALUE) {
 
-        if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
+        if (this->SIZE >= this->CAPACITY) this->reAllocate(this->CAPACITY + this->CAPACITY / 2);
         
 
-        arrayList[SIZE] = std::move(VALUE);
-        SIZE++;
+        this->arrayList[this->SIZE] = std::move(VALUE);
+        this->SIZE++;
     }
 
     /**
      * @brief A pop method to remove the last element of an ArrayList
      */
     void pop() {
-        if(SIZE > 0) {
-            SIZE--;
-            arrayList[SIZE].~T();
+        if(this->SIZE > 0) {
+            this->SIZE--;
+            this->arrayList[this->SIZE].~T();
         }
     }
 
@@ -191,9 +184,9 @@ public:
      * @return bool
      */
     bool empty() {
-        for (size_t i = 0; i < SIZE; i++) arrayList[i].~T();
+        for (size_t i = 0; i < this->SIZE; i++) this->arrayList[i].~T();
 
-        SIZE = 0;
+        this->SIZE = 0;
         return true;
     }
 
@@ -203,7 +196,7 @@ public:
      * @return bool
      */
     bool is_empty() {
-        if(SIZE != 0) return 0;
+        if(this->SIZE != 0) return 0;
         return 1;
     }
 
@@ -216,28 +209,28 @@ public:
      */
     template <typename... Arguments>
     T& emplace(Arguments&&... ARGS) {
-        if (SIZE >= CAPACITY) reAllocate(CAPACITY + CAPACITY / 2);
+        if (this->SIZE >= this->CAPACITY) this->reAllocate(this->CAPACITY + this->CAPACITY / 2);
 
-        new(&arrayList[SIZE]) T(std::forward<Arguments>(ARGS)...);
-        return arrayList[SIZE++];
+        new(&this->arrayList[this->SIZE]) T(std::forward<Arguments>(ARGS)...);
+        return this->arrayList[this->SIZE++];
     }
 
-    T& operator[] (size_t INDEX) { return arrayList[INDEX]; } 
-    const T& operator[] (size_t INDEX) const { return arrayList[INDEX]; } 
+    T& operator[] (size_t INDEX) { return this->arrayList[INDEX]; } 
+    const T& operator[] (size_t INDEX) const { return this->arrayList[INDEX]; } 
 
     /**
      * @brief A method to return the size of the list
      * 
      * @return size_t 
      */
-    size_t size() const { return SIZE; }
+    size_t size() const { return this->SIZE; }
 
     /**
      * @brief A method to return the capacity of the list
      * 
      * @return size_t 
      */
-    size_t capacity() const { return CAPACITY; }
+    size_t capacity() const { return this->CAPACITY; }
 
     /**
      * @brief A method that returns the value of the given index
@@ -245,7 +238,10 @@ public:
      * @param IN The index
      * @return T 
      */
-    T at(size_t IN) { return arrayList[IN]; }
+    T at(size_t IN) {
+        IN = IN - 1;
+        return this->arrayList[IN];
+    }
 
     /**
      * @brief A method that fills an ArrayList with a given value
@@ -257,7 +253,7 @@ public:
      */
     bool fill(T VALUE, size_t start, size_t end) {
         if (start > end) return 0;
-        for (size_t i = start; i < end; i++) arrayList[i] = VALUE;
+        for (size_t i = start; i < end; i++) this->arrayList[i] = VALUE;
         return 1;
     }
 
@@ -268,9 +264,7 @@ public:
      * @return bool 
      */
     bool find(T any) {
-        for(size_t i = 0; i < SIZE; i++) {
-            if (arrayList[i] == any) return true;
-        }
+        for(size_t i = 0; i < this->SIZE; i++) if(this->arrayList[i] == any) return true;
         return false;
     }
 
@@ -280,10 +274,10 @@ public:
     void reverse() {
         T temp;
 
-        for(size_t i = 0; i < SIZE / 2; i++){
-            temp = arrayList[i];
-            arrayList[i] = arrayList[SIZE-i-1];
-            arrayList[SIZE-i-1] = temp;
+        for(size_t i = 0; i < this->SIZE / 2; i++){
+            temp = this->arrayList[i];
+            this->arrayList[i] = this->arrayList[this->SIZE - i - 1];
+            this->arrayList[this->SIZE - i - 1] = temp;
         }
     }
 
@@ -292,28 +286,28 @@ public:
      * 
      * @return Iterator 
      */
-    Iterator begin() { return Iterator(arrayList); }
+    Iterator begin() { return Iterator(this->arrayList); }
 
     /**
      * @brief The ending of the iterator
      * 
      * @return Iterator 
      */
-    Iterator end() { return Iterator(arrayList + SIZE); }
+    Iterator end() { return Iterator(this->arrayList + this->SIZE); }
     
     /**
      * @brief A method that returns the first value of the ArrayList
      * 
      * @return T 
      */
-    T front() { return arrayList[0]; }
+    T front() { return this->arrayList[0]; }
 
     /**
      * @brief A method that returns the last value of the ArrayList
      * 
      * @return T 
      */
-    T back() { return arrayList[SIZE - 1]; }
+    T back() { return this->arrayList[SIZE - 1]; }
 
     /**
      * @brief A method that assigns an ArrayList with a given value to a given index
@@ -322,9 +316,8 @@ public:
      * @param any The value
      */
     void assign(size_t indecies, T any) {
-        for(size_t i = 0; i < indecies; i++) {
-            push(any);
-        }
+        for(size_t i = 0; i < indecies; i++)
+            this->push(any);
     } 
 
     /**
@@ -337,13 +330,13 @@ public:
     bool insert(size_t index, T any) {
         if(index == 0) return false;
         index = index - 1;
-        if(index == size()) {
+        if(index == this->size()) {
             push(any);
             return true;
         }
-        if(index > size()) return false;
+        if(index > this->size()) return false;
         if(index < 0) return false;
-        size_t newSize = size() + 1;
+        size_t newSize = this->size() + 1;
         T* temp = new T[newSize];
 
         for(size_t i = 0, j = 0; i < newSize; i++, j++) {
@@ -352,12 +345,12 @@ public:
                 temp[i] = any;
                 continue;
             }
-            temp[i] = arrayList[j];
+            temp[i] = this->arrayList[j];
         }
         
         empty();
         for(size_t i = 0; i < newSize; i++) {
-            push(temp[i]);
+            this->push(temp[i]);
         }
 
         delete[] temp;
@@ -373,26 +366,26 @@ public:
     bool remove(size_t index) {
         if(index == 0) return false;
         index = index - 1;
-        if(index > size()) return false;
-        if(index == size()) {
-            pop();
+        if(index > this->size()) return false;
+        if(index == this->size()) {
+            this->pop();
             return true;
         }
         if(index < 0) return false;
-        size_t newSize = size() - 1;
+        size_t newSize = this->size() - 1;
         T* temp = new T[newSize];
 
-        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+        for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
             if(j == index) {
                 i--;
                 continue;
             }
-            temp[i] = arrayList[j];
+            temp[i] = this->arrayList[j];
         }
 
-        empty();
+        this->empty();
         for(size_t i = 0; i < newSize; i++) {
-            push(temp[i]);
+            this->push(temp[i]);
         }
 
         delete[] temp;
@@ -406,24 +399,24 @@ public:
      * @return bool
      */
     bool remove_all(T any) {
-        size_t newSize = size() - 1;
+        size_t newSize = this->size() - 1;
         T* temp = new T[newSize];
 
         size_t SIZE = 0;
         size_t subOfSize = 0;
-        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+        for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
             if(this->arrayList[j] == any) {
                 i--;
                 subOfSize++;
                 continue;
             }
-            temp[i] = arrayList[j];
+            temp[i] = this->arrayList[j];
             SIZE++;
         }
 
         this->empty();
         for(size_t i = 0; i <= SIZE - subOfSize; i++) {
-            push(temp[i]);
+            this->push(temp[i]);
         }
 
         delete[] temp;
@@ -437,25 +430,25 @@ public:
      * @return bool
      */
     bool remove_e(T any) {
-        size_t newSize = size() - 1;
+        size_t newSize = this->size() - 1;
         T* temp = new T[newSize];
 
         size_t SIZE = 0;
         size_t count = 0;
-        for(size_t i = 0, j = 0; i < size() - 1; i++, j++) {
+        for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
             if(count == 0 && this->arrayList[j] == any) {
                 i--;
                 count++;
                 continue;
             }
             
-            temp[i] = arrayList[j];
+            temp[i] = this->arrayList[j];
             SIZE++;
         }
 
         this->empty();
         for(size_t i = 0; i <= SIZE - 1; i++) {
-            push(temp[i]);
+            this->push(temp[i]);
         }
 
         delete[] temp;
@@ -469,10 +462,8 @@ public:
      * @param old_value The old value
      */
     void replace(T new_value, T old_value) {
-        for (size_t i = 0; i < size(); i++)
-        {
-            if (arrayList[i] == old_value) arrayList[i] = new_value;
-        }
+        for (size_t i = 0; i < this->size(); i++)
+            if (this->arrayList[i] == old_value) this->arrayList[i] = new_value;
     }
 
     /**
@@ -482,10 +473,10 @@ public:
      * @param old_value The old value
      */
     void quick_replace(T new_value, T old_value) {
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < this->size(); i++)
         {
-            if (arrayList[i] == old_value) {
-                arrayList[i] = new_value;
+            if (this->arrayList[i] == old_value) {
+                this->arrayList[i] = new_value;
                 break;
             }
         }
@@ -495,12 +486,12 @@ public:
      * @brief A method that sorts an ArrayList
      */
     void sort() {
-        for (int i = SIZE / 2 - 1; i >= 0; i--) heapify(arrayList, SIZE, i);
+        for (int i = this->SIZE / 2 - 1; i >= 0; i--) heapify(this->arrayList, this->SIZE, i);
 
-        for (int i = SIZE - 1; i > 0; i--) {
-            std::swap(arrayList[0], arrayList[i]);
+        for (int i = this->SIZE - 1; i > 0; i--) {
+            std::swap(this->arrayList[0], this->arrayList[i]);
 
-            heapify(arrayList, i, 0);
+            heapify(this->arrayList, i, 0);
         }
     }
 
@@ -519,21 +510,19 @@ public:
     }
 
     /**
-     * @brief A range class that can be used to assign an ArrayList of integers.
+     * @brief A range class that can be used to assign an ArrayList of numbers.
      * 
      * @param number The starting of the range. 
      */ 
     bool range(size_t number) {
         size_t i;
         if(0 > number) return false;
-        for (i = 0; i < number; i++) {
-            push(i);
-        }
+        for (i = 0; i < number; i++) this->push(i);
         return true;
     }
 
     /**
-     * @brief A range class that can be used to assign an ArrayList of integers.
+     * @brief A range class that can be used to assign an ArrayList of numbers.
      * 
      * @param firstNumber The starting of the range.
      * @param lastNumber The ending of the range.
@@ -542,9 +531,7 @@ public:
     bool range(int firstNumber, int lastNumber) {
         int i;
         if(firstNumber > lastNumber) return false;
-        for (i = firstNumber; i < lastNumber; i++) {
-            push(i);
-        }
+        for (i = firstNumber; i < lastNumber; i++) this->push(i);
         return true;
     }
 
@@ -562,7 +549,7 @@ public:
         int i;
         if(firstNumber > lastNumber) return false;
         for (i = firstNumber; i < lastNumber; i++) {
-            push(i);
+            this->push(i);
             i = i + step;
         }
         return true;
@@ -575,39 +562,39 @@ public:
      * @return bool
      */
     bool filter(std::string condition) {
-        size_t Size = size();
+        size_t Size = this->size();
         size_t count = 0;
         T* temp = new T[Size];
         if(condition == "even") {
-            for(size_t i = 0, j = 0; i < size(); i++) {
-                if((int)arrayList[i] % 2 == 0) {
-                    temp[j] = arrayList[i];
+            for(size_t i = 0, j = 0; i < this->size(); i++) {
+                if((int)this->arrayList[i] % 2 == 0) {
+                    temp[j] = this->arrayList[i];
                     j++;
                     count++;
                 }
             }
-            empty();
+            this->empty();
             for(size_t i = 0; i < count; i++) {
-                push(temp[i]);
+                this->push(temp[i]);
             }
-            if(is_empty()) return false;
+            if(this->is_empty()) return false;
             return true;
 
         }
 
         if(condition == "odd") {
-            for(size_t i = 0, j = 0; i < size(); i++) {
-                if((int)arrayList[i] % 2 != 0) {
-                    temp[j] = arrayList[i];
+            for(size_t i = 0, j = 0; i < this->size(); i++) {
+                if((int)this->arrayList[i] % 2 != 0) {
+                    temp[j] = this->arrayList[i];
                     j++;
                     count++;
                 }
             }
-            empty();
+            this->empty();
             for(size_t i = 0; i < count; i++) {
-                push(temp[i]);
+                this->push(temp[i]);
             }
-            if(is_empty()) return false;
+            if(this->is_empty()) return false;
             return true;
 
         }
@@ -655,11 +642,15 @@ public:
      * @return bool
      */
     bool is_equal(ArrayList<T> other) {
-        if(this->size() != other.size()) return 0;
-        for(size_t i = 0; i < this->size(); i++) if(this->arrayList[i] != other.arrayList[i]) return 0; 
-        return 1;
+        if(this->size() != other.size()) return false;
+        for(size_t i = 0; i < this->size(); i++) if(this->arrayList[i] != other.arrayList[i]) return false; 
+        return true;
     }
 
+    /**
+     * @brief A method that shuffles an ArrayList
+     * 
+     */
     void shuffle() {
 
         srand(time(NULL));
@@ -670,7 +661,6 @@ public:
         }
         return;
     }
-
 
    friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
         out << "[";
@@ -683,7 +673,6 @@ public:
         
        return out;
     }
-
 };
 
 #endif
