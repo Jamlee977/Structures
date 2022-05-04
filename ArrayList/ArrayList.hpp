@@ -250,14 +250,14 @@ public:
         return this->arrayList[this->SIZE++];
     }
 
-    T& operator[] (int INDEX) {
+    T& operator[](int INDEX) {
         if(INDEX >= 0) return this->arrayList[INDEX];
         INDEX = INDEX + 1;
         int temp = (this->size() + INDEX);
         return this->arrayList[temp - 1];
     }
     
-    const T& operator[] (int INDEX) const { 
+    const T& operator[](int INDEX) const { 
         if(INDEX >= 0) return this->arrayList[INDEX];
         INDEX = INDEX + 1;
         int temp = (this->size() + INDEX);
