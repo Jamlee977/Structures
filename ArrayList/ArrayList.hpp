@@ -179,6 +179,41 @@ public:
     }
 
     /**
+     * @brief A function that removes a specific index from an ArrayList
+     * 
+     * @param indecies 
+     * @return bool
+     */
+    bool pop(size_t index) {
+        if(index == 0) return false;
+        index = index - 1;
+        if(index > this->size()) return false;
+        if(index == this->size()) {
+            this->pop();
+            return true;
+        }
+        if(index < 0) return false;
+        size_t newSize = this->size() - 1;
+        T* temp = new T[newSize];
+
+        for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
+            if(j == index) {
+                i--;
+                continue;
+            }
+            temp[i] = this->arrayList[j];
+        }
+
+        this->empty();
+        for(size_t i = 0; i < newSize; i++) {
+            this->push(temp[i]);
+        }
+
+        delete[] temp;
+        return true;
+    }
+
+    /**
      * @brief An empty method to make an ArrayList empty
      * 
      * @return bool
@@ -215,8 +250,19 @@ public:
         return this->arrayList[this->SIZE++];
     }
 
-    T& operator[] (size_t INDEX) { return this->arrayList[INDEX]; } 
-    const T& operator[] (size_t INDEX) const { return this->arrayList[INDEX]; } 
+    T& operator[] (int INDEX) {
+        if(INDEX >= 0) return this->arrayList[INDEX];
+        INDEX = INDEX + 1;
+        int temp = (this->size() + INDEX);
+        return this->arrayList[temp - 1];
+    }
+    
+    const T& operator[] (int INDEX) const { 
+        if(INDEX >= 0) return this->arrayList[INDEX];
+        INDEX = INDEX + 1;
+        int temp = (this->size() + INDEX);
+        return this->arrayList[temp - 1];     
+    }
 
     /**
      * @brief A method to return the size of the list
@@ -358,33 +404,30 @@ public:
     }
 
     /**
-     * @brief A function that removes a specific index from an ArrayList
+     * @brief A function that removes a specific value from an ArrayList
      * 
-     * @param indecies 
+     * @param any 
      * @return bool
      */
-    bool remove(size_t index) {
-        if(index == 0) return false;
-        index = index - 1;
-        if(index > this->size()) return false;
-        if(index == this->size()) {
-            this->pop();
-            return true;
-        }
-        if(index < 0) return false;
+    bool remove(T any) {
         size_t newSize = this->size() - 1;
         T* temp = new T[newSize];
 
+        size_t SIZE = 0;
+        size_t count = 0;
         for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
-            if(j == index) {
+            if(count == 0 && this->arrayList[j] == any) {
                 i--;
+                count++;
                 continue;
             }
+            
             temp[i] = this->arrayList[j];
+            SIZE++;
         }
 
         this->empty();
-        for(size_t i = 0; i < newSize; i++) {
+        for(size_t i = 0; i <= SIZE - 1; i++) {
             this->push(temp[i]);
         }
 
@@ -416,38 +459,6 @@ public:
 
         this->empty();
         for(size_t i = 0; i <= SIZE - subOfSize; i++) {
-            this->push(temp[i]);
-        }
-
-        delete[] temp;
-        return true;
-    }
-
-    /**
-     * @brief A function that removes a specific value from an ArrayList
-     * 
-     * @param any 
-     * @return bool
-     */
-    bool remove_e(T any) {
-        size_t newSize = this->size() - 1;
-        T* temp = new T[newSize];
-
-        size_t SIZE = 0;
-        size_t count = 0;
-        for(size_t i = 0, j = 0; i < this->size() - 1; i++, j++) {
-            if(count == 0 && this->arrayList[j] == any) {
-                i--;
-                count++;
-                continue;
-            }
-            
-            temp[i] = this->arrayList[j];
-            SIZE++;
-        }
-
-        this->empty();
-        for(size_t i = 0; i <= SIZE - 1; i++) {
             this->push(temp[i]);
         }
 
@@ -662,14 +673,14 @@ public:
         return;
     }
 
-   friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
+    friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
         out << "[";
         for(size_t i = 0; i < Object.size(); i++) {
             if(i == 0) out << ' ' << Object.arrayList[0] << ", ";
             else if(i != Object.size() - 1) out << Object.arrayList[i] << ", ";
             if(i == Object.size() - 1) out << Object.arrayList[i] << ' ';
         }
-        out << "]" << "\n";
+        out << "]\n";
         
        return out;
     }
