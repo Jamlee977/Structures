@@ -133,7 +133,7 @@ public:
 
     ArrayList(std::initializer_list<T> arrayList) {
         this->reAllocate(2);
-        for(auto&& element : arrayList) {
+        for(const auto& element : arrayList) {
             this->push(element);
         }
     }
@@ -171,11 +171,13 @@ public:
     /**
      * @brief A pop method to remove the last element of an ArrayList
      */
-    void pop() {
+    T pop() {
+        T value = this->arrayList[this->size() - 1];
         if(this->SIZE > 0) {
             this->SIZE--;
             this->arrayList[this->SIZE].~T();
         }
+        return value;
     }
 
     /**
@@ -184,15 +186,16 @@ public:
      * @param indecies 
      * @return bool
      */
-    bool pop(size_t index) {
-        if(index == 0) return false;
+    T pop(size_t index) {
+        if(index == 0) return this->arrayList[this->size()];
         index = index - 1;
-        if(index > this->size()) return false;
+        if(index > this->size() || (index + 1) > this->size()) return this->arrayList[this->size()];
         if(index == this->size()) {
             this->pop();
-            return true;
+            return this->arrayList[this->size() - 1];
         }
-        if(index < 0) return false;
+
+        auto value = this->arrayList[index];
         size_t newSize = this->size() - 1;
         T* temp = new T[newSize];
 
@@ -210,7 +213,7 @@ public:
         }
 
         delete[] temp;
-        return true;
+        return value;
     }
 
     /**
@@ -614,17 +617,101 @@ public:
     }
 
     /**
+     * @brief A method that will filter a specific condition using lambda and change the ArrayList into that condition (currently it's only "even" and "odd")
+     * ArrayList<int> list; list.range(0, 21); list.filter([](int x) { return x % 2 == 0; }); output: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+     * 
+     * @param condition 
+     * @return bool
+     */
+    bool filter(bool(*condition)(int value)) {
+        size_t Size = this->size();
+        size_t count = 0;
+        T* temp = new T[Size];
+        auto cnd = condition;
+
+        for(size_t i = 0; i < this->size(); i++) {
+            for(size_t j = 0; i < this->size(); i++) {
+                if(cnd(this->arrayList[i])) {
+                    if(!cnd(this->arrayList[i]) && 
+                        (int)this->arrayList[i] - this->arrayList[i] == 0 && 
+                        (int)this->arrayList[i] % 2 != 0)
+                    {
+                        temp[j] = this->arrayList[i];
+                        j++;
+                        count++;
+                    }
+                    else if(cnd(this->arrayList[i]) &&
+                        (int)this->arrayList[i] - this->arrayList[i] == 0 && 
+                        (int)this->arrayList[i] % 2 == 0)
+                    {
+                        temp[j] = this->arrayList[i];
+                        j++;
+                        count++;
+                    }
+                }
+            }
+        }
+        this->empty();
+        for(size_t i = 0; i < count; i++) {
+            this->push(temp[i]);
+        }
+        if(this->is_empty()) return false;
+        delete[] temp;
+        return true;
+    }
+
+    bool filter(bool(*condition)(const std::string& value)) {
+        size_t Size = this->size();
+        size_t count = 0;
+        T* temp = new T[this->size()];
+        for(size_t i = 0, j = 0; i < this->size(); i++) {
+            if(condition(this->arrayList[i])) {
+                temp[j] = this->arrayList[i];
+                j++;
+                count++;
+            }
+        }
+        this->empty();
+        for(size_t i = 0; i < count; i++) {
+            this->push(temp[i]);
+        }
+        return true;
+    }
+
+    /**
      * @brief A method used to swap 2 elements in an ArrayList with indecies starting from 1 for the first index
      * 
      * @param firstIndex 
      * @param secondIndex 
      */
-    void swap(int firstIndex, int secondIndex) {
+    void swap(size_t firstIndex, size_t secondIndex) {
         firstIndex = firstIndex - 1;
         secondIndex = secondIndex - 1;
         T temp = arrayList[firstIndex];
         arrayList[firstIndex] = arrayList[secondIndex];
         arrayList[secondIndex] = temp;
+    }
+
+    /**
+     * @brief A method to swap all elements between 2 ArrayLists
+     * 
+     * @param other Another Arraylist to swap elements with
+     * @return bool 
+     */
+    bool swap(ArrayList<T>& other) {
+        size_t sizeOfThis  = this->size();
+        size_t sizeOfOther = other.size();
+
+        T* temp = new T[sizeOfThis];
+        for(size_t i = 0; i < sizeOfThis; i++) temp[i] = this->arrayList[i];
+        this->empty();
+
+        for(size_t i = 0; i < sizeOfOther; i++) this->push(other.arrayList[i]);
+        other.empty();
+        for(size_t i = 0; i < sizeOfThis; i++) other.push(temp[i]);
+
+        delete[] temp;
+        return true;
     }
 
     /**
@@ -671,6 +758,21 @@ public:
             std::swap(this->arrayList[i], this->arrayList[j]);
         }
         return;
+    }
+
+    /**
+     * @brief A method to copy an ArrayList into another ArrayList
+     * 
+     * @param other 
+     * @return bool
+     */
+    bool clone(ArrayList<T>& other) {
+        if(!this->is_empty()) this->empty();
+
+        for(size_t i = 0; i < other.size(); i++) {
+            this->push(other.arrayList[i]);
+        }
+        return true;
     }
 
     friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
