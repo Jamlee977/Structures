@@ -4,6 +4,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <ctime>
+#include <functional>
 
 #ifndef ArrayList_HPP
 #define ArrayList_HPP
@@ -617,63 +618,19 @@ public:
     }
 
     /**
-     * @brief A method that will filter a specific condition using lambda and change the ArrayList into that condition (currently it's only "even" and "odd")
-     * ArrayList<int> list; list.range(0, 21); list.filter([](int x) { return x % 2 == 0; }); output: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+     * @brief This method can be used to filter out values using lambda function such as:
+     * list.filter([](T any) { return any > 10; }); will output the values that are greater than 10 inside that list. 
+     * list.filter([](const std::string& any) { return any.size() > 4; }); will output the values that are greater than 4 inside that list. 
      * 
      * @param condition 
-     * @return bool
+     * @return bool 
      */
-    bool filter(bool(*condition)(int value)) {
-        size_t Size = this->size();
-        size_t count = 0;
-        T* temp = new T[Size];
-        auto cnd = condition;
-
-        for(size_t i = 0; i < this->size(); i++) {
-            for(size_t j = 0; i < this->size(); i++) {
-                if(cnd(this->arrayList[i])) {
-                    if(!cnd(this->arrayList[i]) && 
-                        (int)this->arrayList[i] - this->arrayList[i] == 0 && 
-                        (int)this->arrayList[i] % 2 != 0)
-                    {
-                        temp[j] = this->arrayList[i];
-                        j++;
-                        count++;
-                    }
-                    else if(cnd(this->arrayList[i]) &&
-                        (int)this->arrayList[i] - this->arrayList[i] == 0 && 
-                        (int)this->arrayList[i] % 2 == 0)
-                    {
-                        temp[j] = this->arrayList[i];
-                        j++;
-                        count++;
-                    }
-                }
+    bool filter(const std::function<bool(const T& value)>& condition) {
+        for(int i = 0; i < this->size(); i++) {
+            if(!condition(this->arrayList[i])) {
+                this->remove(this->arrayList[i]);
+                i--;
             }
-        }
-        this->empty();
-        for(size_t i = 0; i < count; i++) {
-            this->push(temp[i]);
-        }
-        if(this->is_empty()) return false;
-        delete[] temp;
-        return true;
-    }
-
-    bool filter(bool(*condition)(const std::string& value)) {
-        size_t Size = this->size();
-        size_t count = 0;
-        T* temp = new T[this->size()];
-        for(size_t i = 0, j = 0; i < this->size(); i++) {
-            if(condition(this->arrayList[i])) {
-                temp[j] = this->arrayList[i];
-                j++;
-                count++;
-            }
-        }
-        this->empty();
-        for(size_t i = 0; i < count; i++) {
-            this->push(temp[i]);
         }
         return true;
     }
