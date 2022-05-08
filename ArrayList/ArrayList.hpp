@@ -733,6 +733,10 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
+        if(Object.size() == 1) {
+            out << "[ " << Object.arrayList[0] << " ]\n";
+            return out;
+        }
         out << "[";
         for(size_t i = 0; i < Object.size(); i++) {
             if(i == 0) out << ' ' << Object.arrayList[0] << ", ";
