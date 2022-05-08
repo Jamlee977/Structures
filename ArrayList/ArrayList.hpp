@@ -4,6 +4,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <ctime>
+// #include <cstring>
 #include <functional>
 
 #ifndef ArrayList_HPP
@@ -117,13 +118,6 @@ private:
         }
     }
 
-    size_t len(std::string lenOfString) {
-        int i, countOfStringChars = 0;
-        for (int i = 0; lenOfString[i]; i++) countOfStringChars++;    
-        return countOfStringChars;
-    }
-
-    
 public:
     using ValueType = T;
     using U         = T;
@@ -146,13 +140,15 @@ public:
      * 
      * @param VALUE The value
      */
-    void push(const T& VALUE) {
+    size_t push(const T& VALUE) {
 
         if (this->SIZE >= this->CAPACITY) this->reAllocate(this->CAPACITY + this->CAPACITY / 2);
         
 
         this->arrayList[this->SIZE] = VALUE;
         this->SIZE++;
+
+        return this->size();
     }
 
     /**
@@ -160,13 +156,15 @@ public:
      * 
      * @param VALUE The value
      */
-    void push(T&& VALUE) {
+    size_t push(T&& VALUE) {
 
         if (this->SIZE >= this->CAPACITY) this->reAllocate(this->CAPACITY + this->CAPACITY / 2);
         
 
         this->arrayList[this->SIZE] = std::move(VALUE);
         this->SIZE++;
+
+        return this->size();
     }
 
     /**
@@ -358,6 +356,21 @@ public:
      * @return T 
      */
     T back() { return this->arrayList[SIZE - 1]; }
+
+    /**
+     * @brief A method that returns the first value of the ArrayList
+     * 
+     * @return size_t
+     */ 
+    size_t first() { return 0; }
+
+    /**
+     * @brief A method that returns the last value of the ArrayList
+     * 
+     * @return size_t 
+     */
+    size_t last() { return this->size() - 1; }
+
 
     /**
      * @brief A method that assigns an ArrayList with a given value to a given index
@@ -571,68 +584,207 @@ public:
     }
 
     /**
-     * @brief A method that will filter a specific condition and change the ArrayList into that condition (currently it's only "even" and "odd")
-     * 
-     * @param condition even or odd
-     * @return bool
-     */
-    bool filter(std::string condition) {
-        size_t Size = this->size();
-        size_t count = 0;
-        T* temp = new T[Size];
-        if(condition == "even") {
-            for(size_t i = 0, j = 0; i < this->size(); i++) {
-                if((int)this->arrayList[i] % 2 == 0) {
-                    temp[j] = this->arrayList[i];
-                    j++;
-                    count++;
-                }
-            }
-            this->empty();
-            for(size_t i = 0; i < count; i++) {
-                this->push(temp[i]);
-            }
-            if(this->is_empty()) return false;
-            return true;
-
-        }
-
-        if(condition == "odd") {
-            for(size_t i = 0, j = 0; i < this->size(); i++) {
-                if((int)this->arrayList[i] % 2 != 0) {
-                    temp[j] = this->arrayList[i];
-                    j++;
-                    count++;
-                }
-            }
-            this->empty();
-            for(size_t i = 0; i < count; i++) {
-                this->push(temp[i]);
-            }
-            if(this->is_empty()) return false;
-            return true;
-
-        }
-
-        delete[] temp;
-    }
-
-    /**
      * @brief This method can be used to filter out values using lambda function such as:
      * list.filter([](T any) { return any > 10; }); will output the values that are greater than 10 inside that list. 
      * list.filter([](const std::string& any) { return any.size() > 4; }); will output the values that are greater than 4 inside that list. 
      * 
      * @param condition 
-     * @return bool 
+     * @return ArrayList& 
      */
-    bool filter(const std::function<bool(const T& value)>& condition) {
+    ArrayList& filter(const std::function<bool(const T& value)>& condition) {
         for(int i = 0; i < this->size(); i++) {
             if(!condition(this->arrayList[i])) {
                 this->remove(this->arrayList[i]);
                 i--;
             }
         }
+        return *this;
+    }
+    
+    /**
+     * @brief Calls an anonymous function on each element of an arraylist, and returns an arraylist that contains the results.
+     * 
+     * @param condition 
+     * @return ArrayList& 
+     */
+    ArrayList& forEach(const std::function<void(T& value)>& condition) {
+        for(size_t i = 0; i < this->size(); i++) {
+            condition(this->arrayList[i]);
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Calls an anonymous function on each element of an arraylist, and returns an arraylist that contains the results.
+     * 
+     * @param condition 
+     * @return ArrayList& 
+     */
+    ArrayList& map(const std::function<T(const T& value)>& condition) {
+        for(size_t i = 0; i < this->size(); i++) {
+            this->arrayList[i] = condition(this->arrayList[i]);
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Combines two or more arraylists.
+     * 
+     * @param other 
+     * @return ArrayList 
+     */
+    ArrayList operator+(const ArrayList& other) {
+        ArrayList<T> temp;
+        for(size_t i = 0; i < this->size(); i++) temp.push(this->arrayList[i]);
+        for(size_t i = 0; i < other.size(); i++) temp.push(other.arrayList[i]);
+        return temp;
+    }
+
+    /**
+     * @brief Combines two or more arraylists.
+     * 
+     * @param other 
+     * @return ArrayList 
+     */
+    ArrayList operator+=(const ArrayList& other) {
+        for(size_t i = 0; i < other.size(); i++) this->push(other.arrayList[i]);
+        return *this;
+    }
+
+    /**
+     * @brief Removes an arraylist's elements from another arraylist.
+     * 
+     * @param other 
+     * @return ArrayList 
+     */
+    ArrayList operator-(const ArrayList& other) {
+        ArrayList<T> temp;
+        for(size_t i = 0; i < this->size(); i++) temp.push(this->arrayList[i]);
+        for(size_t i = 0; i < other.size(); i++) temp.remove(other.arrayList[i]);
+        return temp;
+    }
+
+    /**
+     * @brief Removes an arraylist's elements from another arraylist.
+     * 
+     * @param other 
+     * @return ArrayList 
+     */
+    ArrayList operator-=(const ArrayList& other) {
+        for(size_t i = 0; i < other.size(); i++) this->remove(other.arrayList[i]);
+        return *this;
+    }
+
+    /**
+     * @brief Combines two arraylists.
+     * 
+     * @param other 
+     * @return ArrayList 
+     */
+    ArrayList concat(const ArrayList<T>& other) {
+        ArrayList<T> newList;
+        for(size_t i = 0; i < this->size(); i++) {
+            newList.push(this->arrayList[i]);
+        }
+        for(size_t i = 0; i < other.size(); i++) {
+            newList.push(other.arrayList[i]);
+        }
+        return newList;
+    }
+
+    /**
+     * @brief Removes a sub list from the list.
+     * 
+     * @param sublist 
+     */
+    void remove_sublist(const ArrayList<T>& sublist) {
+        for(size_t i = 0; i < sublist.size(); i++) {
+            this->remove(sublist.arrayList[i]);
+        }
+    }
+
+    /**
+     * @brief Determines whether all the members of an array satisfy the specified test.
+     * 
+     * @param condition 
+     * @return bool
+     */
+    bool every(const std::function<bool(const T& value)>& condition) {
+        for(int i = 0; i < this->size(); i++) {
+            if(!condition(this->arrayList[i])) return false;
+        }
         return true;
+    }
+
+    /**
+     * @brief Determines whether the specified callback function returns true for any element of an array.
+     * 
+     * @param condition 
+     * @return bool
+     */
+    bool some(const std::function<bool(const T& value)>& condition) {
+        for(int i = 0; i < this->size(); i++) {
+            if(condition(this->arrayList[i])) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @brief This method returns the index of an element specified in the third parameter.
+     * 
+     * @param start start of range
+     * @param end end of range
+     * @param value 
+     * @return int 
+     */
+    int findIndex(size_t start, size_t end, const T& value) {
+        for(int i = start; i < end; i++) {
+            if(this->arrayList[i] == value) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * @brief Returns the index of the first element in the array where predicate is true, and -1 otherwise.
+     * 
+     * @param condition 
+     * @return int 
+     */
+    int findIndex(const std::function<T(const T& value)>& condition) {
+        for(int i = 0; i < this->size(); i++) {
+            if(condition(this->arrayList[i])) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * @brief This method returns the first element that satisfies the condition.
+     * 
+     * @param start start of range
+     * @param end end of range
+     * @param condition 
+     * @return T 
+     */
+    T find_if(size_t start, size_t end, const std::function<bool(const T& value)>& condition) {
+        for(int i = start; i < end; i++) {
+            if(condition(this->arrayList[i])) return this->arrayList[i];
+        }
+        return T();
+    }
+    
+    /**
+     * @brief This method returns the first element that does not satisfy the condition.
+     * 
+     * @param start start of range
+     * @param end end of range
+     * @param condition 
+     * @return T 
+     */
+    T find_if_not(size_t start, size_t end, const std::function<bool(const T& value)>& condition) {
+        for(int i = start; i < end; i++) {
+            if(!condition(this->arrayList[i])) return this->arrayList[i];
+        }
+        return T();
     }
 
     /**
@@ -707,7 +859,6 @@ public:
      * 
      */
     void shuffle() {
-
         srand(time(NULL));
 
         for(size_t i = this->size() - 1; i > 0; i--) {
@@ -723,13 +874,18 @@ public:
      * @param other 
      * @return bool
      */
-    bool clone(ArrayList<T>& other) {
+    bool clone(const ArrayList<T>& other) {
         if(!this->is_empty()) this->empty();
 
         for(size_t i = 0; i < other.size(); i++) {
             this->push(other.arrayList[i]);
         }
         return true;
+    }
+
+    ArrayList& operator=(const ArrayList<T>& list) {
+        this->clone(list);
+        return *this;
     }
 
     friend std::ostream& operator<<(std::ostream& out, const ArrayList<T>& Object) {
