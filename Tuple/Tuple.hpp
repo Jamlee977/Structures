@@ -178,21 +178,11 @@ public:
     Iterator end() { return Iterator(tuple + Size); }
 
     /**
-     * @brief A method to get the value of a specific index (start from 1)
-     * 
-     * @param index 
-     * @return T 
-     */
-    T get(size_t index) { 
-        index = index - 1;
-        return this->tuple[index]; 
-    }
-
-    /**
      * @brief A class that allows tuples to use lists methods
      * 
      */
-    struct list {
+    class list {
+    public:
         /**
          * @brief A method to get the value of a specific index (start from 1)
          * 
@@ -232,6 +222,43 @@ public:
          */
         void pop(Tuple<T>& TUPLE) {
             TUPLE.pop();
+        }
+
+        /**
+         * @brief A function that removes a specific index from a tuple
+         * 
+         * @param index 
+         * @param TUPLE 
+         * @return true 
+         * @return false 
+         */
+        bool pop(size_t index, Tuple<T>& TUPLE) {
+            if(index == 0) return false;
+            index = index - 1;
+            if(index > TUPLE.size()) return false;
+            if(index == TUPLE.size()) {
+                this->pop(TUPLE);
+                return true;
+            }
+            if(index < 0) return false;
+            size_t newSize = TUPLE.size() - 1;
+            T* temp = new T[newSize];
+
+            for(size_t i = 0, j = 0; i < TUPLE.size() - 1; i++, j++) {
+                if(j == index) {
+                    i--;
+                    continue;
+                }
+                temp[i] = TUPLE.tuple[j];
+            }
+
+            TUPLE.empty();
+            for(size_t i = 0; i < newSize; i++) {
+                this->push(temp[i], TUPLE);
+            }            
+
+            delete[] temp;
+            return true;
         }
 
         /**
@@ -286,37 +313,33 @@ public:
         }
 
         /**
-         * @brief A function that removes a specific index from a tuple
+         * @brief A function that removes a specific value from a tuple
          * 
-         * @param index 
+         * @param any 
          * @param TUPLE 
-         * @return true 
-         * @return false 
+         * @return bool
          */
-        bool remove(size_t index, Tuple<T>& TUPLE) {
-            if(index == 0) return false;
-            index = index - 1;
-            if(index > TUPLE.size()) return false;
-            if(index == TUPLE.size()) {
-                this->pop(TUPLE);
-                return true;
-            }
-            if(index < 0) return false;
+        bool remove(T any, Tuple<T>& TUPLE) {
             size_t newSize = TUPLE.size() - 1;
             T* temp = new T[newSize];
 
+            size_t SIZE = 0;
+            size_t count = 0;
             for(size_t i = 0, j = 0; i < TUPLE.size() - 1; i++, j++) {
-                if(j == index) {
+                if(count == 0 && TUPLE.tuple[j] == any) {
                     i--;
+                    count++;
                     continue;
                 }
+                
                 temp[i] = TUPLE.tuple[j];
+                SIZE++;
             }
 
             TUPLE.empty();
-            for(size_t i = 0; i < newSize; i++) {
+            for(size_t i = 0; i <= SIZE - 1; i++) {
                 this->push(temp[i], TUPLE);
-            }            
+            }
 
             delete[] temp;
             return true;
@@ -347,39 +370,6 @@ public:
 
             TUPLE.empty();
             for(size_t i = 0; i <= SIZE - subOfSize; i++) {
-                this->push(temp[i], TUPLE);
-            }
-
-            delete[] temp;
-            return true;
-        }
-
-        /**
-         * @brief A function that removes a specific value from a tuple
-         * 
-         * @param any 
-         * @param TUPLE 
-         * @return bool
-         */
-        bool remove_e(T any, Tuple<T>& TUPLE) {
-            size_t newSize = TUPLE.size() - 1;
-            T* temp = new T[newSize];
-
-            size_t SIZE = 0;
-            size_t count = 0;
-            for(size_t i = 0, j = 0; i < TUPLE.size() - 1; i++, j++) {
-                if(count == 0 && TUPLE.tuple[j] == any) {
-                    i--;
-                    count++;
-                    continue;
-                }
-                
-                temp[i] = TUPLE.tuple[j];
-                SIZE++;
-            }
-
-            TUPLE.empty();
-            for(size_t i = 0; i <= SIZE - 1; i++) {
                 this->push(temp[i], TUPLE);
             }
 
@@ -667,6 +657,12 @@ public:
         return true;
     }
 
+    const T* operator[] (size_t Index) const { 
+        Index = Index - 1;
+        return this->tuple[Index];
+    } 
+
+
     friend std::ostream& operator<<(std::ostream& out, const Tuple<T> Object) {
         out << "(";
         for(size_t i = 0; i < Object.size(); i++) {
@@ -675,7 +671,7 @@ public:
             if(i == Object.size() - 1) out << Object.tuple[i] << ' ';
         }
 
-        out << ")" << "\n";
+        out << ")\n";
         
        return out;
     }
