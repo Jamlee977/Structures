@@ -1,5 +1,16 @@
 #pragma once
 
+/**
+ * @file ArrayList.hpp
+ * @author Omar Estietie (jamlee977@outlook.com), (@OmarEstietie on Twitter)
+ * @brief It is a data structure that is used to store a collection of data. 
+ * It is a dynamic data structure that can be resized as needed. 
+ * It is a linear data structure. It is a collection of data that is indexed by a number. 
+ * It works like a vector but it has much more methods and features taken from other languages like Javascript, Python and Java.
+ * @version 2.0
+ * @date 2022-05-09 
+ */
+
 // ! Omar Estietie
 #include <iostream>
 #include <initializer_list>
@@ -660,7 +671,7 @@ public:
     
     /**
      * @brief Returns a copy of a section of an arraylist.
-     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
+     * For both start and end.
      * 
      * @return ArrayList& 
      */
@@ -670,8 +681,7 @@ public:
 
     /**
      * @brief Returns a copy of a section of an arraylist.
-     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
-     * 
+     * For both start and end.
      * @return ArrayList& 
      */
     ArrayList& slice(size_t start) {
@@ -686,7 +696,7 @@ public:
 
     /**
      * @brief Returns a copy of a section of an arraylist.
-     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
+     * For both start and end.
      * 
      * @return ArrayList& 
      */
@@ -806,7 +816,7 @@ public:
     }
     
     /**
-     * @brief Returns the value of the first element in the array where predicate is true, and undefined otherwise.
+     * @brief Returns the value of the first element in the array where predicate is true.
      * 
      * @param condition 
      * @return T 
