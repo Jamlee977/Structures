@@ -9,6 +9,9 @@ Imagine it like plates sorted one on another, the last element in it is the firs
 ## Queue<>
 The name suggests it, a queue where the first element gets printed/removed first
 
+## Tuple<>
+An immutable data structure that cannot be changed unless used **.List**
+
 
 Download them using 
 
