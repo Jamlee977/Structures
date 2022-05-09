@@ -4,7 +4,6 @@
 #include <iostream>
 #include <initializer_list>
 #include <ctime>
-// #include <cstring>
 #include <functional>
 
 #ifndef ArrayList_HPP
