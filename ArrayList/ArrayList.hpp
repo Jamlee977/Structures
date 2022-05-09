@@ -285,7 +285,7 @@ public:
      * @param IN The index
      * @return T 
      */
-    T at(size_t IN) {
+    T at(size_t IN) const {
         IN = IN - 1;
         return this->arrayList[IN];
     }
@@ -317,8 +317,10 @@ public:
 
     /**
      * @brief A method that reverses a list
+     * 
+     * @return ArrayList&
      */
-    void reverse() {
+    ArrayList& reverse() {
         T temp;
 
         for(size_t i = 0; i < this->SIZE / 2; i++){
@@ -326,6 +328,7 @@ public:
             this->arrayList[i] = this->arrayList[this->SIZE - i - 1];
             this->arrayList[this->SIZE - i - 1] = temp;
         }
+        return *this;
     }
 
     /**
@@ -627,6 +630,80 @@ public:
     }
 
     /**
+     * @brief Calls an anonymous function on each element of an arraylist, and removes the elements that return true.
+     * 
+     * @param condition 
+     * @return ArrayList& 
+     */
+    ArrayList& remove(const std::function<bool(const T& value)>& condition) {
+        for(size_t i = 0; i < this->size(); i++) {
+            if(condition(this->arrayList[i])) {
+                this->remove(this->arrayList[i]);
+                i--;
+            }
+        }
+        return *this;
+    }
+
+    /**
+     * @brief Removes the first element from an array and returns it.
+     * If the array is empty, undefined is returned and the arraylist is not modified.
+     * 
+     * @return T 
+     */
+    T shift() {
+        if(this->size() == 0) return 0;
+        T temp = this->arrayList[0];
+        this->remove(this->arrayList[0]);
+        return temp;
+    }
+    
+    /**
+     * @brief Returns a copy of a section of an arraylist.
+     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
+     * 
+     * @return ArrayList& 
+     */
+    ArrayList& slice() {
+        return *this;
+    }
+
+    /**
+     * @brief Returns a copy of a section of an arraylist.
+     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
+     * 
+     * @return ArrayList& 
+     */
+    ArrayList& slice(size_t start) {
+        if(start > this->size()) return *this;
+        ArrayList<T> temp;
+        for(size_t i = start; i < this->size(); i++) {
+            temp.push(this->arrayList[i]);
+        }
+        *this = temp;
+        return *this;
+    }
+
+    /**
+     * @brief Returns a copy of a section of an arraylist.
+     * For both start and end, a negative index can be used to indicate an offset from the end of the arraylist.
+     * 
+     * @return ArrayList& 
+     */
+    ArrayList& slice(size_t start, size_t end) {
+        if(start > end) return *this;
+        if(start > this->size()) return *this;
+        if(end > this->size()) end = this->size();
+
+        ArrayList<T> temp;
+        for(size_t i = start; i < end; i++) {
+            temp.push(this->arrayList[i]);
+        }
+        *this = temp;
+        return *this;
+    }
+
+    /**
      * @brief Combines two or more arraylists.
      * 
      * @param other 
@@ -726,6 +803,19 @@ public:
             if(condition(this->arrayList[i])) return true;
         }
         return false;
+    }
+    
+    /**
+     * @brief Returns the value of the first element in the array where predicate is true, and undefined otherwise.
+     * 
+     * @param condition 
+     * @return T 
+     */
+    T find(const std::function<bool(const T& value)>& condition) {
+        for(int i = 0; i < this->size(); i++) {
+            if(condition(this->arrayList[i])) return this->arrayList[i];
+        }
+        return T();
     }
 
     /**
@@ -881,7 +971,7 @@ public:
         }
         return true;
     }
-
+    
     ArrayList& operator=(const ArrayList<T>& list) {
         this->clone(list);
         return *this;
