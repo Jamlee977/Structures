@@ -52,6 +52,16 @@ public:
         --(*this);
         return iterator;
     }
+    
+    ArrayListIterator& operator+(int i) {
+        this->arrayList_ptr += i;
+        return *this;
+    }
+    
+    ArrayListIterator& operator-(int i) {
+        this->arrayList_ptr -= i;
+        return *this;
+    }
 
 
     ReferenceType operator[](int index) {
@@ -67,7 +77,6 @@ public:
     ReferenceType operator*() {
         return *this->arrayList_ptr;
     }
-
 
     bool operator==(const ArrayListIterator& other) const {
         return this->arrayList_ptr == other.arrayList_ptr;
@@ -864,9 +873,9 @@ public:
      * @param condition 
      * @return T 
      */
-    T find_if(size_t start, size_t end, const std::function<bool(const T& value)>& condition) {
-        for(int i = start; i < end; i++) {
-            if(condition(this->arrayList[i])) return this->arrayList[i];
+    T find_if(Iterator start, Iterator end, const std::function<bool(const T& value)>& condition) {
+        for(Iterator it = start; it != end; it++) {
+            if(condition(*it)) return *it;
         }
         return T();
     }
@@ -879,9 +888,9 @@ public:
      * @param condition 
      * @return T 
      */
-    T find_if_not(size_t start, size_t end, const std::function<bool(const T& value)>& condition) {
-        for(int i = start; i < end; i++) {
-            if(!condition(this->arrayList[i])) return this->arrayList[i];
+    T find_if_not(Iterator start, Iterator end, const std::function<bool(const T& value)>& condition) {
+        for(Iterator it = start; it != end; it++) {
+            if(!condition(*it)) return *it;
         }
         return T();
     }
